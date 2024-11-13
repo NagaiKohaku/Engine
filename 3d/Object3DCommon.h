@@ -2,12 +2,11 @@
 #include "d3dx12.h"
 
 #include "wrl.h"
+#include "vector"
 
 class DirectXCommon;
 
 class Camera;
-
-class DebugCamera;
 
 ///=====================================================/// 
 /// 3Dオブジェクト基底
@@ -35,6 +34,11 @@ public:
 	/// </summary>
 	void CommonDrawSetting();
 
+	/// <summary>
+	/// ImGuiの表示
+	/// </summary>
+	void DisplayImGui();
+
 	///-------------------------------------------/// 
 	/// セッター・ゲッター
 	///-------------------------------------------///
@@ -58,11 +62,19 @@ public:
 	/// <param name="camera">カメラ</param>
 	void SetDefaultCamera(Camera* camera) { defaultCamera_ = camera; }
 
-	/// <summary>
-	/// デバッグカメラのセッター
-	/// </summary>
-	/// <param name="debugCamera">デバッグカメラ</param>
-	void SetDefaultCamera(DebugCamera* debugCamera) { debugCamera_ = debugCamera; }
+	///-------------------------------------------/// 
+	/// 列挙型
+	///-------------------------------------------///
+private:
+
+	//ブレンドモードの種類
+	enum BlendType {
+		Normal,   //通常
+		Add,      //加算
+		Subtruct, //減算
+		Multily,  //乗算
+		Screen    //スクリーン
+	};
 
 	///-------------------------------------------/// 
 	/// クラス内処理関数
@@ -90,12 +102,12 @@ private:
 	//デフォルトカメラ
 	Camera* defaultCamera_ = nullptr;
 
-	//デバッグカメラ
-	DebugCamera* debugCamera_ = nullptr;
+	//ブレンドモード
+	int blendMode_;
 
 	//ルートシグネチャ
 	Microsoft::WRL::ComPtr<ID3D12RootSignature> rootSignature_ = nullptr;
 
 	//グラフィックパイプラインステート
-	Microsoft::WRL::ComPtr<ID3D12PipelineState> graphicsPipelineState_ = nullptr;
+	std::vector<Microsoft::WRL::ComPtr<ID3D12PipelineState>> graphicsPipelineState_;
 };
