@@ -1,7 +1,8 @@
 #pragma once
-#include "BaseScene.h"
 
 #include "memory"
+
+class BaseScene;
 
 ///=====================================================/// 
 ///シーンマネージャー
