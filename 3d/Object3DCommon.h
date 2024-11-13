@@ -14,6 +14,20 @@ class Camera;
 class Object3DCommon {
 
 	///-------------------------------------------/// 
+	/// 列挙型
+	///-------------------------------------------///
+public:
+
+	//ブレンドモードの種類
+	enum BlendType {
+		Normal,   //通常
+		Add,      //加算
+		Subtruct, //減算
+		Multily,  //乗算
+		Screen    //スクリーン
+	};
+
+	///-------------------------------------------/// 
 	/// メンバ関数
 	///-------------------------------------------///
 public:
@@ -33,11 +47,6 @@ public:
 	/// 描画前処理
 	/// </summary>
 	void CommonDrawSetting();
-
-	/// <summary>
-	/// ImGuiの表示
-	/// </summary>
-	void DisplayImGui();
 
 	///-------------------------------------------/// 
 	/// セッター・ゲッター
@@ -62,19 +71,11 @@ public:
 	/// <param name="camera">カメラ</param>
 	void SetDefaultCamera(Camera* camera) { defaultCamera_ = camera; }
 
-	///-------------------------------------------/// 
-	/// 列挙型
-	///-------------------------------------------///
-private:
-
-	//ブレンドモードの種類
-	enum BlendType {
-		Normal,   //通常
-		Add,      //加算
-		Subtruct, //減算
-		Multily,  //乗算
-		Screen    //スクリーン
-	};
+	/// <summary>
+	/// ブレンドモードのセッター
+	/// </summary>
+	/// <param name="blendType">ブレンドタイプ</param>
+	void SetBlendMode(BlendType blendType) { blendMode_ = blendType; }
 
 	///-------------------------------------------/// 
 	/// クラス内処理関数
@@ -103,7 +104,7 @@ private:
 	Camera* defaultCamera_ = nullptr;
 
 	//ブレンドモード
-	int blendMode_;
+	BlendType blendMode_;
 
 	//ルートシグネチャ
 	Microsoft::WRL::ComPtr<ID3D12RootSignature> rootSignature_ = nullptr;

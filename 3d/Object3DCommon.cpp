@@ -6,8 +6,6 @@
 
 #include "cassert"
 
-#include "imgui.h"
-
 ///=====================================================/// 
 /// シングルトンインスタンス
 ///=====================================================///
@@ -27,6 +25,7 @@ void Object3DCommon::Initialize() {
 	//グラフィックパイプラインの生成
 	CreateGraphicsPipeline();
 
+	//ブレンドモードをNormalに設定
 	blendMode_ = Normal;
 }
 
@@ -43,16 +42,6 @@ void Object3DCommon::CommonDrawSetting() {
 
 	//プリミティブトポロジーを設定
 	dxCommon_->GetCommandList()->IASetPrimitiveTopology(D3D_PRIMITIVE_TOPOLOGY_TRIANGLELIST);
-
-}
-
-void Object3DCommon::DisplayImGui() {
-
-	ImGui::Begin("Object3DCommon");
-
-	ImGui::Combo("BlendMode", &blendMode_, "kBlendModeNormal\0kBlendModeAdd\0kBlendModeSubtract\0kBlendModeMultiply\0kBlendModeScreen\0\0");
-
-	ImGui::End();
 
 }
 
