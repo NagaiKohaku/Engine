@@ -1,6 +1,8 @@
 #include "SceneManager.h"
 
 /// ===シーン=== ///
+#include "BaseScene.h"
+
 #include "GameScene.h"
 
 ///=====================================================/// 
