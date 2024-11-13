@@ -27,6 +27,10 @@ int WINAPI WinMain(HINSTANCE, HINSTANCE, LPSTR, int) {
 	DirectXCommon* directXCommon = DirectXCommon::GetInstance();
 	directXCommon->Initialize();
 
+	//ImGuiマネージャー
+	ImGuiManager* imGuiManager = ImGuiManager::GetInstance();
+	imGuiManager->Initialize();
+
 	//SRVマネージャー
 	SrvManager* srvManager = SrvManager::GetInstance();
 	srvManager->Initialize();
@@ -54,10 +58,6 @@ int WINAPI WinMain(HINSTANCE, HINSTANCE, LPSTR, int) {
 	//音声
 	Audio* audio = Audio::GetInstance();
 	audio->Initialize();
-
-	//ImGuiマネージャー
-	ImGuiManager* imGuiManager = ImGuiManager::GetInstance();
-	imGuiManager->Initialize();
 
 	//シーンマネージャー
 	SceneManager* sceneManager = SceneManager::GetInstance();

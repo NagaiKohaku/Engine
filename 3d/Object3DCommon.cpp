@@ -25,6 +25,8 @@ void Object3DCommon::Initialize() {
 	//グラフィックパイプラインの生成
 	CreateGraphicsPipeline();
 
+	//ブレンドモードをNormalに設定
+	blendMode_ = Normal;
 }
 
 ///=====================================================/// 
@@ -36,7 +38,7 @@ void Object3DCommon::CommonDrawSetting() {
 	dxCommon_->GetCommandList()->SetGraphicsRootSignature(rootSignature_.Get());
 
 	//グラフィックパイプラインを設定
-	dxCommon_->GetCommandList()->SetPipelineState(graphicsPipelineState_.Get());
+	dxCommon_->GetCommandList()->SetPipelineState(graphicsPipelineState_[blendMode_].Get());
 
 	//プリミティブトポロジーを設定
 	dxCommon_->GetCommandList()->IASetPrimitiveTopology(D3D_PRIMITIVE_TOPOLOGY_TRIANGLELIST);
@@ -161,9 +163,15 @@ void Object3DCommon::CreateGraphicsPipeline() {
 	//BlendStateの設定
 	D3D12_BLEND_DESC blendDesc{};
 
-	//すべての色要素を書き込む
-	blendDesc.RenderTarget[0].RenderTargetWriteMask =
-		D3D12_COLOR_WRITE_ENABLE_ALL;
+	//Normalのブレンドモードで設定
+	blendDesc.RenderTarget[0].RenderTargetWriteMask = D3D12_COLOR_WRITE_ENABLE_ALL;
+	blendDesc.RenderTarget[0].BlendEnable = TRUE;
+	blendDesc.RenderTarget[0].SrcBlend = D3D12_BLEND_SRC_ALPHA;
+	blendDesc.RenderTarget[0].BlendOp = D3D12_BLEND_OP_ADD;
+	blendDesc.RenderTarget[0].DestBlend = D3D12_BLEND_INV_SRC_ALPHA;
+	blendDesc.RenderTarget[0].SrcBlendAlpha = D3D12_BLEND_ONE;
+	blendDesc.RenderTarget[0].BlendOpAlpha = D3D12_BLEND_OP_ADD;
+	blendDesc.RenderTarget[0].DestBlendAlpha = D3D12_BLEND_ZERO;
 
 	/// === RasterizerStateを設定する === ///
 
@@ -209,8 +217,11 @@ void Object3DCommon::CreateGraphicsPipeline() {
 
 	/// === PSOを生成する === ///
 
-	//PSOを生成する
+	//PSOの設定
 	D3D12_GRAPHICS_PIPELINE_STATE_DESC graphicsPipelineStateDesc{};
+
+	//PSO
+	Microsoft::WRL::ComPtr<ID3D12PipelineState> graphicsPipelineState;
 
 	//RootSignature
 	graphicsPipelineStateDesc.pRootSignature = rootSignature_.Get();
@@ -250,8 +261,78 @@ void Object3DCommon::CreateGraphicsPipeline() {
 
 	graphicsPipelineStateDesc.SampleMask = D3D12_DEFAULT_SAMPLE_MASK;
 
+	//PSOを生成
 	hr = dxCommon_->GetDevice()->CreateGraphicsPipelineState(&graphicsPipelineStateDesc,
-		IID_PPV_ARGS(&graphicsPipelineState_));
+		IID_PPV_ARGS(&graphicsPipelineState));
 
+	//正常に生成できているかの確認
 	assert(SUCCEEDED(hr));
+
+	//配列に追加
+	graphicsPipelineState_.push_back(graphicsPipelineState);
+
+	/// === ブレンドモードAddのPSOを生成 === ///
+
+	graphicsPipelineStateDesc.BlendState.RenderTarget[0].SrcBlend = D3D12_BLEND_SRC_ALPHA;
+	graphicsPipelineStateDesc.BlendState.RenderTarget[0].BlendOp = D3D12_BLEND_OP_ADD;
+	graphicsPipelineStateDesc.BlendState.RenderTarget[0].DestBlend = D3D12_BLEND_ONE;
+
+	//PSOを生成
+	hr = dxCommon_->GetDevice()->CreateGraphicsPipelineState(&graphicsPipelineStateDesc,
+		IID_PPV_ARGS(&graphicsPipelineState));
+
+	//正常に生成できているかの確認
+	assert(SUCCEEDED(hr));
+
+	//配列に追加
+	graphicsPipelineState_.push_back(graphicsPipelineState);
+
+	/// === ブレンドモードSubtractのPSOを生成 === ///
+
+	graphicsPipelineStateDesc.BlendState.RenderTarget[0].SrcBlend = D3D12_BLEND_SRC_ALPHA;
+	graphicsPipelineStateDesc.BlendState.RenderTarget[0].BlendOp = D3D12_BLEND_OP_REV_SUBTRACT;
+	graphicsPipelineStateDesc.BlendState.RenderTarget[0].DestBlend = D3D12_BLEND_ONE;
+
+	//PSOを生成
+	hr = dxCommon_->GetDevice()->CreateGraphicsPipelineState(&graphicsPipelineStateDesc,
+		IID_PPV_ARGS(&graphicsPipelineState));
+
+	//正常に生成できているかの確認
+	assert(SUCCEEDED(hr));
+
+	//配列に追加
+	graphicsPipelineState_.push_back(graphicsPipelineState);
+
+	/// === ブレンドモードMultilyのPSOを生成 === ///
+
+	graphicsPipelineStateDesc.BlendState.RenderTarget[0].SrcBlend = D3D12_BLEND_ZERO;
+	graphicsPipelineStateDesc.BlendState.RenderTarget[0].BlendOp = D3D12_BLEND_OP_ADD;
+	graphicsPipelineStateDesc.BlendState.RenderTarget[0].DestBlend = D3D12_BLEND_SRC_COLOR;
+
+	//PSOを生成
+	hr = dxCommon_->GetDevice()->CreateGraphicsPipelineState(&graphicsPipelineStateDesc,
+		IID_PPV_ARGS(&graphicsPipelineState));
+
+	//正常に生成できているかの確認
+	assert(SUCCEEDED(hr));
+
+	//配列に追加
+	graphicsPipelineState_.push_back(graphicsPipelineState);
+
+	/// === ブレンドモードScreenのPSOを生成 === ///
+
+	graphicsPipelineStateDesc.BlendState.RenderTarget[0].SrcBlend = D3D12_BLEND_INV_DEST_COLOR;
+	graphicsPipelineStateDesc.BlendState.RenderTarget[0].BlendOp = D3D12_BLEND_OP_ADD;
+	graphicsPipelineStateDesc.BlendState.RenderTarget[0].DestBlend = D3D12_BLEND_ONE;
+
+	//PSOを生成
+	hr = dxCommon_->GetDevice()->CreateGraphicsPipelineState(&graphicsPipelineStateDesc,
+		IID_PPV_ARGS(&graphicsPipelineState));
+
+	//正常に生成できているかの確認
+	assert(SUCCEEDED(hr));
+
+	//配列に追加
+	graphicsPipelineState_.push_back(graphicsPipelineState);
+
 }
