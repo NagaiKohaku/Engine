@@ -25,6 +25,12 @@ void Object3DCommon::Initialize() {
 	//グラフィックパイプラインの生成
 	CreateGraphicsPipeline();
 
+	cameraForGpuResource = dxCommon_->CreateBufferResource(sizeof(CameraForGPU));
+
+	cameraForGpuResource.Get()->Map(0, nullptr, reinterpret_cast<void**>(&cameraForGpuData));
+
+	cameraForGpuData->worldPosition = Vector3(0.0f, 0.0f, 0.0f);
+
 	//ブレンドモードをNormalに設定
 	blendMode_ = Normal;
 }
@@ -34,6 +40,9 @@ void Object3DCommon::Initialize() {
 ///=====================================================///
 void Object3DCommon::CommonDrawSetting() {
 
+	//カメラ位置を取得
+	cameraForGpuData->worldPosition = defaultCamera_->GetTranslate();
+
 	//ルートシグネチャを設定
 	dxCommon_->GetCommandList()->SetGraphicsRootSignature(rootSignature_.Get());
 
@@ -42,6 +51,9 @@ void Object3DCommon::CommonDrawSetting() {
 
 	//プリミティブトポロジーを設定
 	dxCommon_->GetCommandList()->IASetPrimitiveTopology(D3D_PRIMITIVE_TOPOLOGY_TRIANGLELIST);
+
+	//カメラ情報の設定
+	dxCommon_->GetCommandList()->SetGraphicsRootConstantBufferView(4, cameraForGpuResource.Get()->GetGPUVirtualAddress());
 
 }
 
@@ -65,7 +77,7 @@ void Object3DCommon::CreateRootSignature() {
 	descriptorRange[0].OffsetInDescriptorsFromTableStart = D3D12_DESCRIPTOR_RANGE_OFFSET_APPEND; //Offsetを自動計算
 
 	//RootParameterを作成
-	D3D12_ROOT_PARAMETER rootParameters[4] = {};
+	D3D12_ROOT_PARAMETER rootParameters[5] = {};
 
 	//マテリアル
 	rootParameters[0].ParameterType = D3D12_ROOT_PARAMETER_TYPE_CBV;                   //CBVを使う
@@ -87,6 +99,11 @@ void Object3DCommon::CreateRootSignature() {
 	rootParameters[3].ParameterType = D3D12_ROOT_PARAMETER_TYPE_CBV;                   //CBVを使う
 	rootParameters[3].ShaderVisibility = D3D12_SHADER_VISIBILITY_PIXEL;                //PixelShaderを使う
 	rootParameters[3].Descriptor.ShaderRegister = 1;                                   //レジスタ番号1を使う
+
+	//カメラ
+	rootParameters[4].ParameterType = D3D12_ROOT_PARAMETER_TYPE_CBV;                   //CBVを使う
+	rootParameters[4].ShaderVisibility = D3D12_SHADER_VISIBILITY_PIXEL;                //PixelShaderを使う
+	rootParameters[4].Descriptor.ShaderRegister = 2;                                   //レジスタ番号2を使う
 
 	descriptionRootSignature.pParameters = rootParameters;               //ルートパラメータ配列へのポインタ
 	descriptionRootSignature.NumParameters = _countof(rootParameters);   //配列の長さ

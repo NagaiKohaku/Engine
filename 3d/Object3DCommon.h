@@ -1,8 +1,11 @@
 #pragma once
 #include "d3dx12.h"
+#include "d3d12.h"
 
 #include "wrl.h"
 #include "vector"
+
+#include "Vector3.h"
 
 class DirectXCommon;
 
@@ -25,6 +28,15 @@ public:
 		Subtruct, //減算
 		Multily,  //乗算
 		Screen    //スクリーン
+	};
+
+	///-------------------------------------------/// 
+	/// 構造体
+	///-------------------------------------------///
+private:
+
+	struct CameraForGPU {
+		Vector3 worldPosition;
 	};
 
 	///-------------------------------------------/// 
@@ -105,6 +117,10 @@ private:
 
 	//ブレンドモード
 	BlendType blendMode_;
+
+	Microsoft::WRL::ComPtr<ID3D12Resource> cameraForGpuResource = nullptr;
+
+	CameraForGPU* cameraForGpuData = nullptr;
 
 	//ルートシグネチャ
 	Microsoft::WRL::ComPtr<ID3D12RootSignature> rootSignature_ = nullptr;
