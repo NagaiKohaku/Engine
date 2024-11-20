@@ -25,6 +25,10 @@ void Object3DCommon::Initialize() {
 	//グラフィックパイプラインの生成
 	CreateGraphicsPipeline();
 
+	directionalLight_ = std::make_unique<DirectionalLight>();
+
+	directionalLight_->Initialize();
+
 	cameraForGpuResource = dxCommon_->CreateBufferResource(sizeof(CameraForGPU));
 
 	cameraForGpuResource.Get()->Map(0, nullptr, reinterpret_cast<void**>(&cameraForGpuData));
@@ -40,6 +44,8 @@ void Object3DCommon::Initialize() {
 ///=====================================================///
 void Object3DCommon::CommonDrawSetting() {
 
+	directionalLight_->Update();
+
 	//カメラ位置を取得
 	cameraForGpuData->worldPosition = defaultCamera_->GetTranslate();
 
@@ -52,9 +58,11 @@ void Object3DCommon::CommonDrawSetting() {
 	//プリミティブトポロジーを設定
 	dxCommon_->GetCommandList()->IASetPrimitiveTopology(D3D_PRIMITIVE_TOPOLOGY_TRIANGLELIST);
 
+	//ライトの描画
+	directionalLight_->SendDataForGPU();
+
 	//カメラ情報の設定
 	dxCommon_->GetCommandList()->SetGraphicsRootConstantBufferView(4, cameraForGpuResource.Get()->GetGPUVirtualAddress());
-
 }
 
 ///=====================================================/// 

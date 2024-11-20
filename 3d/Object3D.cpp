@@ -25,12 +25,8 @@ Object3D::Object3D() {
 	//座標変換行列リソースを作成
 	WVPResource_ = object3DCommon_->GetDxCommon()->CreateBufferResource(sizeof(TransformationMatrix));
 
-	//平行光源リソースを作成
-	DirectionalLightResource_ = object3DCommon_->GetDxCommon()->CreateBufferResource(sizeof(DirectionalLight));
-
 	//書き込むためのアドレスを取得する
 	WVPResource_->Map(0, nullptr, reinterpret_cast<void**>(&WVPData_));
-	DirectionalLightResource_->Map(0, nullptr, reinterpret_cast<void**>(&directionalLightData_));
 
 	//座標変換行列データの設定
 	WVPData_->WVP = MakeIdentity4x4();
@@ -39,11 +35,6 @@ Object3D::Object3D() {
 
 	//Transformの設定
 	transform_ = { {1.0f,1.0f,1.0f},{0.0f,0.0f,0.0f},{0.0f,0.0f,0.0f} };
-
-	//平行光源データの設定
-	directionalLightData_->color = { 1.0f,1.0f,1.0f,1.0f }; //色を設定
-	directionalLightData_->direction = { 0.0f,-1.0f,0.0f }; //向きを設定
-	directionalLightData_->intensity = 1.0f;                //輝度を設定
 
 	//今持っているカメラをデフォルトカメラに設定
 	camera_ = object3DCommon_->GetDefaultCamera();
@@ -75,9 +66,6 @@ void Object3D::Update() {
 	WVPData_->WVP = worldViewProjectionMatrix;
 	WVPData_->World = worldMatrix;
 	WVPData_->WorldInverseTranspose = Inverse4x4(worldMatrix);
-
-	//平行光源データの設定
-	directionalLightData_->direction = Normalize(directionalLightData_->direction);
 }
 
 ///=====================================================/// 
@@ -87,9 +75,6 @@ void Object3D::Draw() {
 
 	//座標変換行列データの設定
 	object3DCommon_->GetDxCommon()->GetCommandList()->SetGraphicsRootConstantBufferView(1, WVPResource_.Get()->GetGPUVirtualAddress());
-
-	//平行光源データの設定
-	object3DCommon_->GetDxCommon()->GetCommandList()->SetGraphicsRootConstantBufferView(3, DirectionalLightResource_.Get()->GetGPUVirtualAddress());
 
 	//3Dモデルが割り当てられていれば描画する
 	if (model_) {
@@ -111,15 +96,6 @@ void Object3D::DisplayImGui() {
 	ImGui::DragFloat3("Scale", &transform_.scale.x, 0.1f);
 	ImGui::ColorEdit3("Color", &color.x);
 	ImGui::DragFloat("Shininess", &shininess, 0.1f);
-
-	if (ImGui::TreeNode("Light")) {
-
-		ImGui::DragFloat3("Direction", &directionalLightData_->direction.x, 0.01f);
-		ImGui::DragFloat("Intensity", &directionalLightData_->intensity, 0.01f,0.0f,1.0f);
-		ImGui::ColorEdit3("Color", &directionalLightData_->color.x);
-
-		ImGui::TreePop();
-	}
 
 	model_->SetColor(color);
 	model_->SetShininess(shininess);

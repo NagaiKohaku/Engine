@@ -7,6 +7,8 @@
 
 #include "Vector3.h"
 
+#include "DirectionalLight.h"
+
 class DirectXCommon;
 
 class Camera;
@@ -115,11 +117,16 @@ private:
 	//デフォルトカメラ
 	Camera* defaultCamera_ = nullptr;
 
+	//平行光源ライト
+	std::unique_ptr<DirectionalLight> directionalLight_;
+
 	//ブレンドモード
 	BlendType blendMode_;
 
+	//バッファリソース
 	Microsoft::WRL::ComPtr<ID3D12Resource> cameraForGpuResource = nullptr;
 
+	//バッファリソース内のデータを指すポインタ
 	CameraForGPU* cameraForGpuData = nullptr;
 
 	//ルートシグネチャ

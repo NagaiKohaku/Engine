@@ -115,6 +115,7 @@ copy "$(WindowsSdkDir)bin\$(TargetPlatformVersion)\x64\dxil.dll" "$(TargetDir)dx
     <ClCompile Include="Base\SrvManager.cpp" />
     <ClCompile Include="2d\TextureManager.cpp" />
     <ClCompile Include="Base\WinApp.cpp" />
+    <ClCompile Include="3d\DirectionalLight.cpp" />
     <ClCompile Include="main.cpp" />
     <ClCompile Include="Math\Easing.cpp" />
     <ClCompile Include="Math\MakeMatrixMath.cpp" />
@@ -145,6 +146,7 @@ copy "$(WindowsSdkDir)bin\$(TargetPlatformVersion)\x64\dxil.dll" "$(TargetDir)dx
     <ClInclude Include="Base\SrvManager.h" />
     <ClInclude Include="2d\TextureManager.h" />
     <ClInclude Include="Base\WinApp.h" />
+    <ClInclude Include="3d\DirectionalLight.h" />
     <ClInclude Include="Math\Easing.h" />
     <ClInclude Include="Math\MakeMatrixMath.h" />
     <ClInclude Include="Math\Matrix4x4.h" />
