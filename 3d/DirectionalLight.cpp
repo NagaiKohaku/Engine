@@ -2,46 +2,61 @@
 
 #include "DirectXCommon.h"
 
+#include "imgui.h"
+
 ///=====================================================/// 
-/// ‰Šú‰»
+/// åˆæœŸåŒ–
 ///=====================================================///
 void DirectionalLight::Initialize() {
 
-	//DirectXŠî’ê‚ğæ“¾
+	//DirectXåŸºåº•ã‚’å–å¾—
 	dxCommon_ = DirectXCommon::GetInstance();
 
-	//ƒŠƒ\[ƒX‚ğì¬
+	//ãƒªã‚½ãƒ¼ã‚¹ã‚’ä½œæˆ
 	DirectionalLightResource_ = dxCommon_->CreateBufferResource(sizeof(LightData));
 
-	//ŒõŒ¹ƒf[ƒ^‚ÌƒAƒhƒŒƒX‚ğ‹L˜^
+	//å…‰æºãƒ‡ãƒ¼ã‚¿ã®ã‚¢ãƒ‰ãƒ¬ã‚¹ã‚’è¨˜éŒ²
 	DirectionalLightResource_->Map(0, nullptr, reinterpret_cast<void**>(&directionalLightData_));
 
-	/// === ŒõŒ¹ƒf[ƒ^‚Ìİ’è === ///
+	/// === å…‰æºãƒ‡ãƒ¼ã‚¿ã®è¨­å®š === ///
 
-	//F‚Ìİ’è
+	//è‰²ã®è¨­å®š
 	directionalLightData_->color = { 1.0f,1.0f,1.0f,1.0f };
 
-	//Œü‚«‚Ìİ’è
+	//å‘ãã®è¨­å®š
 	directionalLightData_->direction = { 0.0f,-1.0f,0.0f };
 
-	//Æ“x‚Ìİ’è
+	//ç…§åº¦ã®è¨­å®š
 	directionalLightData_->intensity = 1.0f;
 }
 
 ///=====================================================/// 
-/// XV
+/// æ›´æ–°
 ///=====================================================///
 void DirectionalLight::Update() {
 
-	//Œü‚«‚ğ³‹K‰»‚·‚é
+	//å‘ãã‚’æ­£è¦åŒ–ã™ã‚‹
 	directionalLightData_->direction = Normalize(directionalLightData_->direction);
 }
 
 ///=====================================================/// 
-/// ƒf[ƒ^‚ğGPU‚É‘—M
+/// ãƒ‡ãƒ¼ã‚¿ã‚’GPUã«é€ä¿¡
 ///=====================================================///
 void DirectionalLight::SendDataForGPU() {
 
-	//ŒõŒ¹ƒf[ƒ^‚ğGPU‚É‘—M
+	//å…‰æºãƒ‡ãƒ¼ã‚¿ã‚’GPUã«é€ä¿¡
 	dxCommon_->GetCommandList()->SetGraphicsRootConstantBufferView(3, DirectionalLightResource_.Get()->GetGPUVirtualAddress());
+}
+
+void DirectionalLight::DisplayImGui() {
+
+	ImGui::Begin("DirectionalLight");
+
+	ImGui::ColorEdit4("Color", &directionalLightData_->color.x);
+
+	ImGui::DragFloat3("Direction", &directionalLightData_->direction.x, 0.01f, -1.0f, 1.0f);
+
+	ImGui::DragFloat("Intensity", &directionalLightData_->intensity, 0.01f);
+
+	ImGui::End();
 }

@@ -93,6 +93,9 @@ int WINAPI WinMain(HINSTANCE, HINSTANCE, LPSTR, int) {
 		//入力の更新
 		input->Update();
 
+		//3dオブジェクト基底の更新
+		object3DCommon->Update();
+
 		//シーンの更新
 		sceneManager->Update();
 

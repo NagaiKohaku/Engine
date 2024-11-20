@@ -58,6 +58,11 @@ public:
 	void Initialize();
 
 	/// <summary>
+	/// 更新処理
+	/// </summary>
+	void Update();
+
+	/// <summary>
 	/// 描画前処理
 	/// </summary>
 	void CommonDrawSetting();
@@ -114,20 +119,20 @@ private:
 	//DirectX基底
 	DirectXCommon* dxCommon_ = nullptr;
 
-	//デフォルトカメラ
-	Camera* defaultCamera_ = nullptr;
-
-	//平行光源ライト
-	std::unique_ptr<DirectionalLight> directionalLight_;
-
 	//ブレンドモード
 	BlendType blendMode_;
+
+	//デフォルトカメラ
+	Camera* defaultCamera_ = nullptr;
 
 	//バッファリソース
 	Microsoft::WRL::ComPtr<ID3D12Resource> cameraForGpuResource = nullptr;
 
 	//バッファリソース内のデータを指すポインタ
 	CameraForGPU* cameraForGpuData = nullptr;
+
+	//平行光源ライト
+	std::unique_ptr<DirectionalLight> directionalLight_;
 
 	//ルートシグネチャ
 	Microsoft::WRL::ComPtr<ID3D12RootSignature> rootSignature_ = nullptr;

@@ -9,53 +9,58 @@
 class DirectXCommon;
 
 ///=====================================================/// 
-/// •½sŒõŒ¹ƒ‰ƒCƒg
+/// å¹³è¡Œå…‰æºãƒ©ã‚¤ãƒˆ
 ///=====================================================///
 class DirectionalLight {
 
 	///-------------------------------------------/// 
-	/// ƒƒ“ƒoŠÖ”
+	/// ãƒ¡ãƒ³ãƒé–¢æ•°
 	///-------------------------------------------///
 public:
 
 	/// <summary>
-	/// ‰Šú‰»
+	/// åˆæœŸåŒ–
 	/// </summary>
 	void Initialize();
 
 	/// <summary>
-	/// XV
+	/// æ›´æ–°
 	/// </summary>
 	void Update();
 
 	/// <summary>
-	/// ƒf[ƒ^‚ğGPU‚É‘—M
+	/// ãƒ‡ãƒ¼ã‚¿ã‚’GPUã«é€ä¿¡
 	/// </summary>
 	void SendDataForGPU();
 
+	/// <summary>
+	/// ImGuiã®è¡¨ç¤º
+	/// </summary>
+	void DisplayImGui();
+
 	///-------------------------------------------/// 
-	/// \‘¢‘Ì
+	/// æ§‹é€ ä½“
 	///-------------------------------------------///
 private:
 
-	//ŒõŒ¹ƒf[ƒ^
+	//å…‰æºãƒ‡ãƒ¼ã‚¿
 	struct LightData {
-		Vector4 color;     //F
-		Vector3 direction; //Œü‚«
-		float intensity;   //Æ“x
+		Vector4 color;     //è‰²
+		Vector3 direction; //å‘ã
+		float intensity;   //ç…§åº¦
 	};
 
 	///-------------------------------------------/// 
-	/// ƒƒ“ƒo•Ï”
+	/// ãƒ¡ãƒ³ãƒå¤‰æ•°
 	///-------------------------------------------///
 private:
 
-	//DirectXŠî’ê
+	//DirectXåŸºåº•
 	DirectXCommon* dxCommon_ = nullptr;
 
-	//ƒoƒbƒtƒ@ƒŠƒ\[ƒX
+	//ãƒãƒƒãƒ•ã‚¡ãƒªã‚½ãƒ¼ã‚¹
 	Microsoft::WRL::ComPtr<ID3D12Resource> DirectionalLightResource_ = nullptr;
 
-	//ŒõŒ¹ƒf[ƒ^
+	//å…‰æºãƒ‡ãƒ¼ã‚¿
 	LightData* directionalLightData_ = nullptr;
 };

@@ -25,14 +25,19 @@ void Object3DCommon::Initialize() {
 	//グラフィックパイプラインの生成
 	CreateGraphicsPipeline();
 
+	//平行光源ライトの生成
 	directionalLight_ = std::make_unique<DirectionalLight>();
 
+	//初期化
 	directionalLight_->Initialize();
 
+	//カメラ情報のバッファリソースの生成
 	cameraForGpuResource = dxCommon_->CreateBufferResource(sizeof(CameraForGPU));
 
+	//リソースにカメラ情報を記録
 	cameraForGpuResource.Get()->Map(0, nullptr, reinterpret_cast<void**>(&cameraForGpuData));
 
+	//カメラ情報の設定
 	cameraForGpuData->worldPosition = Vector3(0.0f, 0.0f, 0.0f);
 
 	//ブレンドモードをNormalに設定
@@ -40,11 +45,22 @@ void Object3DCommon::Initialize() {
 }
 
 ///=====================================================/// 
+/// 更新処理
+///=====================================================///
+void Object3DCommon::Update() {
+
+	//平行光源ライトのImGuiを表示
+	directionalLight_->DisplayImGui();
+
+	//平行光源ライトの更新
+	directionalLight_->Update();
+
+}
+
+///=====================================================/// 
 /// 描画前処理
 ///=====================================================///
 void Object3DCommon::CommonDrawSetting() {
-
-	directionalLight_->Update();
 
 	//カメラ位置を取得
 	cameraForGpuData->worldPosition = defaultCamera_->GetTranslate();
