@@ -9,9 +9,9 @@
 class DirectXCommon;
 
 ///=====================================================/// 
-/// 平行光源ライト
+/// 点光源ライト
 ///=====================================================///
-class DirectionalLight {
+class PointLight {
 
 	///-------------------------------------------/// 
 	/// メンバ関数
@@ -45,9 +45,12 @@ private:
 
 	//光源データ
 	struct LightData {
-		Vector4 color;     //色
-		Vector3 direction; //向き
-		float intensity;   //照度
+		Vector4 color;    //色
+		Vector3 position; //座標
+		float intensity;  //照度
+		float radius;     //半径
+		float decay;      //減少度
+		float padding[2]; //穴埋め
 	};
 
 	///-------------------------------------------/// 

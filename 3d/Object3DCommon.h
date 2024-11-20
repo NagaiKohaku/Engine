@@ -8,6 +8,7 @@
 #include "Vector3.h"
 
 #include "DirectionalLight.h"
+#include "PointLight.h"
 
 class DirectXCommon;
 
@@ -133,6 +134,9 @@ private:
 
 	//平行光源ライト
 	std::unique_ptr<DirectionalLight> directionalLight_;
+
+	//点光源ライト
+	std::unique_ptr<PointLight> pointLight_;
 
 	//ルートシグネチャ
 	Microsoft::WRL::ComPtr<ID3D12RootSignature> rootSignature_ = nullptr;
