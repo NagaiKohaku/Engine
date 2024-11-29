@@ -99,6 +99,8 @@ public:
 	/// <returns>座標</returns>
 	const Vector3& GetTranslate() const { return transform_.translate; }
 
+	const Vector3& GetWorldTranslate() const { return { worldMatrix_.m[3][0],worldMatrix_.m[3][1],worldMatrix_.m[3][2] }; }
+
 	/// <summary>
 	/// ワールド行列のゲッター
 	/// </summary>

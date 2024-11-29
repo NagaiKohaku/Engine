@@ -55,6 +55,9 @@ void Object3DCommon::Initialize() {
 ///=====================================================///
 void Object3DCommon::Update() {
 
+	//カメラ位置を取得
+	cameraForGpuData->worldPosition = defaultCamera_->GetWorldTranslate();
+
 	//平行光源ライトのImGuiを表示
 	directionalLight_->DisplayImGui();
 
@@ -69,9 +72,6 @@ void Object3DCommon::Update() {
 /// 描画前処理
 ///=====================================================///
 void Object3DCommon::CommonDrawSetting() {
-
-	//カメラ位置を取得
-	cameraForGpuData->worldPosition = defaultCamera_->GetTranslate();
 
 	//ルートシグネチャを設定
 	dxCommon_->GetCommandList()->SetGraphicsRootSignature(rootSignature_.Get());
@@ -133,17 +133,17 @@ void Object3DCommon::CreateRootSignature() {
 	//カメラ
 	rootParameters[3].ParameterType = D3D12_ROOT_PARAMETER_TYPE_CBV;                   //CBVを使う
 	rootParameters[3].ShaderVisibility = D3D12_SHADER_VISIBILITY_PIXEL;                //PixelShaderを使う
-	rootParameters[3].Descriptor.ShaderRegister = 1;                                   //レジスタ番号2を使う
+	rootParameters[3].Descriptor.ShaderRegister = 1;                                   //レジスタ番号1を使う
 
 	//平行光源ライト
 	rootParameters[4].ParameterType = D3D12_ROOT_PARAMETER_TYPE_CBV;                   //CBVを使う
 	rootParameters[4].ShaderVisibility = D3D12_SHADER_VISIBILITY_PIXEL;                //PixelShaderを使う
-	rootParameters[4].Descriptor.ShaderRegister = 2;                                   //レジスタ番号1を使う
+	rootParameters[4].Descriptor.ShaderRegister = 2;                                   //レジスタ番号2を使う
 
 	//点光源ライト
 	rootParameters[5].ParameterType = D3D12_ROOT_PARAMETER_TYPE_CBV;                   //CBVを使う
 	rootParameters[5].ShaderVisibility = D3D12_SHADER_VISIBILITY_PIXEL;                //PixelShaderを使う
-	rootParameters[5].Descriptor.ShaderRegister = 3;                                   //レジスタ番号1を使う
+	rootParameters[5].Descriptor.ShaderRegister = 3;                                   //レジスタ番号3を使う
 
 	descriptionRootSignature.pParameters = rootParameters;               //ルートパラメータ配列へのポインタ
 	descriptionRootSignature.NumParameters = _countof(rootParameters);   //配列の長さ

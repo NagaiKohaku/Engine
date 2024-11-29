@@ -126,17 +126,17 @@ private:
 	//デフォルトカメラ
 	Camera* defaultCamera_ = nullptr;
 
-	//バッファリソース
-	Microsoft::WRL::ComPtr<ID3D12Resource> cameraForGpuResource = nullptr;
-
-	//バッファリソース内のデータを指すポインタ
-	CameraForGPU* cameraForGpuData = nullptr;
-
 	//平行光源ライト
 	std::unique_ptr<DirectionalLight> directionalLight_;
 
 	//点光源ライト
 	std::unique_ptr<PointLight> pointLight_;
+
+	//バッファリソース内のデータを指すポインタ
+	CameraForGPU* cameraForGpuData = nullptr;
+
+	//バッファリソース
+	Microsoft::WRL::ComPtr<ID3D12Resource> cameraForGpuResource = nullptr;
 
 	//ルートシグネチャ
 	Microsoft::WRL::ComPtr<ID3D12RootSignature> rootSignature_ = nullptr;

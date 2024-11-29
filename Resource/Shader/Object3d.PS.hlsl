@@ -63,11 +63,14 @@ ConstantBuffer<PointLight> gPointLight : register(b3);
 
 ///=== 関数 ===///
 
+//内積
+float Dot(float3 v1, float3 v2);
+
 //平行光源ライトの計算
 float3 DirectionalLightReflection(VertexShaderOutput input, float4 textureColor);
 
 //点光源ライトの計算
-float3 PointLightLightReflection(VertexShaderOutput input, float4 textureColor, float3 pointLightDirection);
+float3 PointLightLightReflection(VertexShaderOutput input, float4 textureColor);
 
 PixelShaderOutPut main(VertexShaderOutput input)
 {
@@ -79,9 +82,6 @@ PixelShaderOutPut main(VertexShaderOutput input)
 
     //テクスチャの色
     float4 textureColor = gTexture.Sample(gSampler, transformedUV.xy);
-    
-    //点光源ライトの入射光
-    float3 pointLightDirection = normalize(input.worldPosition - gPointLight.position);
 
     //テクスチャのアルファ値が0であれば
     if (textureColor.a == 0.0)
@@ -102,7 +102,7 @@ PixelShaderOutPut main(VertexShaderOutput input)
 
     if (gMaterial.enableLighting != 0)
     {
-        output.color.rgb = DirectionalLightReflection(input, textureColor) + PointLightLightReflection(input, textureColor, pointLightDirection);
+        output.color.rgb = DirectionalLightReflection(input, textureColor) + PointLightLightReflection(input, textureColor);
         output.color.a = gMaterial.color.a * textureColor.a;
     }
     else
@@ -120,11 +120,9 @@ float3 DirectionalLightReflection(VertexShaderOutput input, float4 textureColor)
 
     ///=== 拡散反射の計算 ===///
 
-    //法線と反射ベクトルの内積
-    float NdotL = dot(normalize(input.normal), -gDirectionLight.direction);
-
+    
     //コサイン値
-    float cos = pow(NdotL * 0.5f + 0.5f, 2.0f);
+    float cos = pow(Dot(input.normal,-gDirectionLight.direction) * 0.5f + 0.5f, 2.0f);
 
     //拡散反射
     float3 diffuse =
@@ -138,11 +136,8 @@ float3 DirectionalLightReflection(VertexShaderOutput input, float4 textureColor)
     //カメラへの反射光(ハーフベクトル)
     float3 halfVector = normalize(-gDirectionLight.direction + toEye);
 
-    //法線とハーフベクトルの内積
-    float NdotH = dot(normalize(input.normal), halfVector);
- 
     //反射強度
-    float specularPow = pow(saturate(NdotH), gMaterial.shininess);
+    float specularPow = pow(saturate(Dot(input.normal,halfVector)), gMaterial.shininess);
 
     //鏡面反射
     float3 specular =
@@ -151,16 +146,16 @@ float3 DirectionalLightReflection(VertexShaderOutput input, float4 textureColor)
     return diffuse + specular;
 }
 
-float3 PointLightLightReflection(VertexShaderOutput input, float4 textureColor, float3 pointLightDirection)
+float3 PointLightLightReflection(VertexShaderOutput input, float4 textureColor)
 {
 
     ///=== 拡散反射の計算 ===///
-
-    //法線と反射ベクトルの内積
-    float NdotL = dot(normalize(input.normal), -pointLightDirection);
+        
+    //点光源ライトの入射光
+    float3 pointLightDirection = normalize(input.worldPosition - gPointLight.position);
 
     //コサイン値
-    float cos = pow(NdotL * 0.5f + 0.5f, 2.0f);
+    float cos = pow(Dot(input.normal,-pointLightDirection) * 0.5f + 0.5f, 2.0f);
 
     //頂点座標とライトの距離
     float distance = length(gPointLight.position - input.worldPosition);
@@ -180,15 +175,18 @@ float3 PointLightLightReflection(VertexShaderOutput input, float4 textureColor, 
     //カメラへの反射光(ハーフベクトル)
     float3 halfVector = normalize(-pointLightDirection + toEye);
 
-    //法線とハーフベクトルの内積
-    float NdotH = dot(normalize(input.normal), halfVector);
- 
     //反射強度
-    float specularPow = pow(saturate(NdotH), gMaterial.shininess);
+    float specularPow = pow(saturate(Dot(input.normal,halfVector)), gMaterial.shininess);
 
     //鏡面反射
     float3 specular =
         gPointLight.color.rgb * gPointLight.intensity * factor * specularPow * float3(1.0f, 1.0f, 1.0f);
 
     return diffuse + specular;
+}
+
+//内積
+float Dot(float3 v1, float3 v2)
+{
+    return dot(normalize(v1), v2);
 }
