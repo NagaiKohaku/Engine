@@ -92,7 +92,7 @@ void Model::InitializeSphere(const std::string& directoryPath, const std::string
 	materialData_->shininess = 50.0f;
 
 	//マテリアルのファイルパスを設定
-	modelData_.material.textureFilePath = directoryPath + "/" + filename;
+	modelData_.material.textureFilePath = directoryPath + filename;
 
 	//マテリアルの読み込み
 	TextureManager::GetInstance()->LoadTexture(modelData_.material.textureFilePath);

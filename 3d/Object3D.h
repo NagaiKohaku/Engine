@@ -55,7 +55,7 @@ public:
 	/// モデルのセッター
 	/// </summary>
 	/// <param name="modelName">ファイル名</param>
-	void SetModel(const std::string& filePath);
+	void SetModel(const std::string& modelName);
 
 	/// <summary>
 	/// カメラのセッター
@@ -98,6 +98,12 @@ public:
 	/// </summary>
 	/// <returns>座標</returns>
 	Vector3 GetTranslate() const { return transform_.translate; }
+
+	/// <summary>
+	/// モデルのゲッター
+	/// </summary>
+	/// <returns>モデル</returns>
+	Model* GetModel() const { return model_;}
 
 	///-------------------------------------------/// 
 	/// メンバ構造体

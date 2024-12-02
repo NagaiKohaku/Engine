@@ -104,7 +104,7 @@ void Object3D::DisplayImGui() {
 ///=====================================================/// 
 /// モデルのセッター
 ///=====================================================///
-void Object3D::SetModel(const std::string& filePath) {
+void Object3D::SetModel(const std::string& modelName) {
 
-	model_ = ModelManager::GetInstance()->FindModel(filePath);
+	model_ = ModelManager::GetInstance()->FindModel(modelName);
 }

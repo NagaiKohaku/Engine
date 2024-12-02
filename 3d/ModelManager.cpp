@@ -21,7 +21,7 @@ void ModelManager::Initialize() {
 	std::unique_ptr<Model> model = std::make_unique<Model>();
 
 	//球体モデルの作成とテクスチャの読み込み
-	model->InitializeSphere("Resource/Texture", "white_128x128.png");
+	model->InitializeSphere("Resource/Texture/", "white_128x128.png");
 
 	//モデル名とモデルデータをコンテナに登録
 	models_.insert(std::make_pair("Default", std::move(model)));
@@ -65,7 +65,7 @@ void ModelManager::CreateSphere(const std::string& modelName, const std::string&
 	std::unique_ptr<Model> model = std::make_unique<Model>();
 
 	//球体モデルの作成とテクスチャの読み込み
-	model->InitializeSphere("Resource/Texture", textureFileName + ".png");
+	model->InitializeSphere("Resource/Texture/", textureFileName + ".png");
 
 	//モデル名とモデルデータをコンテナに登録
 	models_.insert(std::make_pair(modelName, std::move(model)));

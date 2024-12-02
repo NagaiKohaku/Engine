@@ -23,7 +23,7 @@ void DirectXCommon::Initialize() {
 	winApp = WinApp::GetInstance();
 
 	//FPS固定初期化
-	initializeFixFPS();
+	InitializeFixFPS();
 
 	//デバイスの初期化
 	InitializeDevice();
@@ -58,8 +58,6 @@ void DirectXCommon::Initialize() {
 	//DXCコンパイラの初期化
 	InitializeDXCCompile();
 
-	//ImGuiの初期化
-	InitializeImGui();
 }
 
 ///=====================================================/// 
@@ -423,7 +421,7 @@ void DirectXCommon::InitializeDepthStencilView() {
 	device_->CreateDepthStencilView(depthStancilResource_.Get(), &dsvDesc, dsvDescriptorHeap_->GetCPUDescriptorHandleForHeapStart());
 
 	//初期化完了のログを出す
-	OutPutLog("Complete Initialize StencilView\n");
+	OutPutLog("Complete Initialize DepthStencilView\n");
 }
 
 ///=====================================================/// 
@@ -516,16 +514,9 @@ void DirectXCommon::InitializeDXCCompile() {
 }
 
 ///=====================================================/// 
-/// ImGuiの初期化
-///=====================================================///
-void DirectXCommon::InitializeImGui() {
-
-}
-
-///=====================================================/// 
 /// FPS固定初期化
 ///=====================================================///
-void DirectXCommon::initializeFixFPS() {
+void DirectXCommon::InitializeFixFPS() {
 
 	//現在時間を記録する
 	reference_ = std::chrono::steady_clock::now();
@@ -901,6 +892,19 @@ Microsoft::WRL::ComPtr<ID3D12DescriptorHeap> DirectXCommon::CreateDescriptorHeap
 	//OutPutLog(ConvertString(std::type(L"Create Succeeded, type:{}, numDescriptions:{}\n", heapType, numDescriptors)));
 
 	return result;
+}
+
+void DirectXCommon::ClearDepthBuffer() {
+
+	//DSVハンドル
+	D3D12_CPU_DESCRIPTOR_HANDLE dsvHandle;
+
+	//DSVを取得
+	dsvHandle = GetCPUDescriptorHandle(dsvDescriptorHeap_, descriptorSizeDSV_, 0);
+
+	//指定した深度で画面全体をクリアする
+	commandList_->ClearDepthStencilView(dsvHandle, D3D12_CLEAR_FLAG_DEPTH, 1.0f, 0, 0, nullptr);
+
 }
 
 ///=====================================================/// 

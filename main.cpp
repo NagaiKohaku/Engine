@@ -3,6 +3,7 @@
 #include "SrvManager.h"
 #include "SpriteCommon.h"
 #include "Object3DCommon.h"
+#include "Object2DCommon.h"
 #include "ModelCommon.h"
 #include "TextureManager.h"
 #include "ModelManager.h"
@@ -42,6 +43,9 @@ int WINAPI WinMain(HINSTANCE, HINSTANCE, LPSTR, int) {
 	//3Dオブジェクト基底
 	Object3DCommon* object3DCommon = Object3DCommon::GetInstance();
 	object3DCommon->Initialize();
+
+	Object2DCommon* object2dCommon = Object2DCommon::GetInstance();
+	object2dCommon->Initialize();
 
 	//モデル基底
 	ModelCommon* modelCommon = ModelCommon::GetInstance();

@@ -17,7 +17,7 @@ void Sprite::Initialize(const std::string& fileName) {
 	spriteCommon_ = SpriteCommon::GetInstance();
 
 	//テクスチャパスの設定
-	texturePath_ = "resources/" + fileName;
+	texturePath_ = fileName;
 
 	//頂点リソースを作成
 	vertexResource_ = spriteCommon_->GetDxCommon()->CreateBufferResource(sizeof(VertexData) * 4);
@@ -27,9 +27,6 @@ void Sprite::Initialize(const std::string& fileName) {
 
 	//マテリアルリソースを作成
 	materialResource_ = spriteCommon_->GetDxCommon()->CreateBufferResource(sizeof(Material));
-
-	//座標変換行列リソース
-	WVPResource_ = spriteCommon_->GetDxCommon()->CreateBufferResource(sizeof(TransformationMatrix));
 
 	//リソースの先頭のアドレスを取得する
 	vertexBufferView_.BufferLocation = vertexResource_->GetGPUVirtualAddress();
@@ -49,16 +46,11 @@ void Sprite::Initialize(const std::string& fileName) {
 	vertexResource_->Map(0, nullptr, reinterpret_cast<void**>(&vertexData_));
 	IndexResource_->Map(0, nullptr, reinterpret_cast<void**>(&indexData_));
 	materialResource_->Map(0, nullptr, reinterpret_cast<void**>(&materialData_));
-	WVPResource_->Map(0, nullptr, reinterpret_cast<void**>(&WVPData_));
 
 	//マテリアルデータの設定
 	materialData_->color = Vector4(1.0f, 1.0f, 1.0f, 1.0f);
 	materialData_->enableLighting = false;
 	materialData_->uvTransform = MakeIdentity4x4();
-
-	//座標変換行列データの設定
-	WVPData_->WVP = MakeIdentity4x4();
-	WVPData_->World = MakeIdentity4x4();
 
 	//テクスチャをロードしてテクスチャ番号を取得
 	TextureManager::GetInstance()->LoadTexture(texturePath_);
@@ -103,19 +95,15 @@ void Sprite::Update() {
 	//左下
 	vertexData_[0].position = { left,bottom,0.0f,1.0f };
 	vertexData_[0].texcoord = { texLeft,texBottom };
-	vertexData_[0].normal = { 0.0f,0.0f,-1.0f };
 	//左上
 	vertexData_[1].position = { left,top,0.0f,1.0f };
 	vertexData_[1].texcoord = { texLeft,texTop };
-	vertexData_[1].normal = { 0.0f,0.0f,-1.0f };
 	//右下
 	vertexData_[2].position = { right,bottom,0.0f,1.0f };
 	vertexData_[2].texcoord = { texRight,texBottom };
-	vertexData_[2].normal = { 0.0f,0.0f,-1.0f };
 	//右上
 	vertexData_[3].position = { right,top,0.0f,1.0f };
 	vertexData_[3].texcoord = { texRight,texTop };
-	vertexData_[3].normal = { 0.0f,0.0f,-1.0f };
 
 	//頂点インデックスのデータを書き込む
 	indexData_[0] = 0;
@@ -124,26 +112,6 @@ void Sprite::Update() {
 	indexData_[3] = 1;
 	indexData_[4] = 3;
 	indexData_[5] = 2;
-
-	//トランスフォームを構築
-	Transform transform{
-		{size_.x,size_.y,1.0f},
-		{0.0f,0.0f,rotation_},
-		{position_.x,position_.y,0.0f}
-	};
-
-	//ワールド行列を生成
-	Matrix4x4 worldMatrix = MakeAffineMatrix(transform.scale, transform.rotate, transform.translate);
-
-	//ビュー行列を単位行列で生成
-	Matrix4x4 viewMatrix = MakeIdentity4x4();
-
-	//プロジェクション行列を生成
-	Matrix4x4 projectionMatrix = MakeOrthographicMatrix(0.0f, 0.0f, WinApp::kClientWidth, WinApp::kClientHeight, 0.0f, 100.0f);
-
-	//WVPデータを設定
-	WVPData_->WVP = Multiply(worldMatrix, Multiply(viewMatrix, projectionMatrix));
-	WVPData_->World = worldMatrix;
 }
 
 ///=====================================================/// 
@@ -159,9 +127,6 @@ void Sprite::Draw() {
 
 	//マテリアルデータの設定
 	spriteCommon_->GetDxCommon()->GetCommandList()->SetGraphicsRootConstantBufferView(0, materialResource_->GetGPUVirtualAddress());
-
-	//座標変換行列データの設定
-	spriteCommon_->GetDxCommon()->GetCommandList()->SetGraphicsRootConstantBufferView(1, WVPResource_->GetGPUVirtualAddress());
 
 	//テクスチャの設定
 	spriteCommon_->GetDxCommon()->GetCommandList()->SetGraphicsRootDescriptorTable(2, TextureManager::GetInstance()->GetSrvHandleGPU(texturePath_));

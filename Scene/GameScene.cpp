@@ -1,5 +1,13 @@
 #include "GameScene.h"
 
+#include "DirectXCommon.h"
+#include "Object3DCommon.h"
+#include "Object2DCommon.h"
+#include "ModelManager.h"
+#include "SpriteManager.h"
+
+#include "imgui.h"
+
 #include "numbers"
 
 void GameScene::Initialize() {
@@ -13,12 +21,15 @@ void GameScene::Initialize() {
 	camera_->SetTranslate({ 0.0f,0.0f,0.0f });
 
 	//カメラの角度
-	camera_->SetRotate({ 0.0f,static_cast<float>(std::numbers::pi) / 180.0f * 180.0f,0.0f });
+	camera_->SetRotate({ 0.0f,0.0f,0.0f });
 
 	//デフォルトカメラを設定
 	Object3DCommon::GetInstance()->SetDefaultCamera(camera_.get());
 
 	/// === リソースの読み込み === ///
+
+	//スプライトのロード
+	SpriteManager::GetInstance()->LoadSprite("Title", "RockShotTitle");
 
 	//モデルのロード
 	ModelManager::GetInstance()->CreateCube("MonsterCube", "monsterBall");
@@ -31,6 +42,18 @@ void GameScene::Initialize() {
 	soundData_ = Audio::GetInstance()->SoundLoad("Resource/Sound/SE/se.wav");
 
 	/// === オブジェクトの生成 === ///
+
+	/// === タイトルの生成 === ///
+
+	sprite_ = std::make_unique<Object2D>();
+
+	sprite_->SetTranslate({ 640.0f,360.0f });
+
+	sprite_->SetSize({ 1280.0f,720.0f });
+
+	sprite_->SetSprite("Title");
+
+	sprite_->GetSprite()->SetAnchorPoint({ 0.5f,0.5f });
 
 	/// === 箱の生成 === ///
 
@@ -52,7 +75,7 @@ void GameScene::Initialize() {
 	ball_->SetTranslate({ 0.0f,3.0f,0.0f });
 
 	//角度の設定
-	ball_->SetRotate({ 0.0f,static_cast<float>(std::numbers::pi) / 180.0f * 90.0f,0.0f });
+	ball_->SetRotate({ 0.0f,static_cast<float>(std::numbers::pi) / 180.0f * -90.0f,0.0f });
 
 	//モデルの設定
 	ball_->SetModel("MonsterBall");
@@ -66,7 +89,7 @@ void GameScene::Initialize() {
 	ground_ = std::make_unique<Object3D>();
 
 	//角度の設定
-	ground_->SetRotate({ 0.0f,static_cast<float>(std::numbers::pi) / 180.0f * 90.0f,0.0f });
+	ground_->SetRotate({ 0.0f,static_cast<float>(std::numbers::pi) / 180.0f * -90.0f,0.0f });
 
 	//モデルの設定
 	ground_->SetModel("Ground");
@@ -86,6 +109,8 @@ void GameScene::Update() {
 
 	//カメラをデバッグ状態で更新
 	camera_->Update();
+
+	sprite_->Update();
 
 	//3Dオブジェクトの更新
 	cube_->Update();
@@ -119,6 +144,13 @@ void GameScene::Update() {
 		ImGui::TreePop();
 	}
 
+	if (ImGui::TreeNode("Sprite")) {
+
+		sprite_->DisplayImGui();
+
+		ImGui::TreePop();
+	}
+
 	if (ImGui::Button("Start Audio")) {
 
 		//音声データの再生
@@ -132,10 +164,15 @@ void GameScene::Update() {
 
 void GameScene::Draw() {
 
-	/// === Spriteの描画 === ///
+	/// === 背景Spriteの描画 === ///
 
 	//Spriteの描画準備
-	SpriteCommon::GetInstance()->CommonDrawSetting();
+	Object2DCommon::GetInstance()->CommonDrawSetting();
+
+	sprite_->Draw();
+
+	//深度情報のリセット
+	DirectXCommon::GetInstance()->ClearDepthBuffer();
 
 	/// === 3DObjectの描画 === ///
 
@@ -149,8 +186,8 @@ void GameScene::Draw() {
 
 	ground_->Draw();
 
-	/// === Spriteの描画 === ///
+	/// === 前景Spriteの描画 === ///
 
-	SpriteCommon::GetInstance()->CommonDrawSetting();
+	Object2DCommon::GetInstance()->CommonDrawSetting();
 
 }

@@ -107,6 +107,8 @@ public:
 		bool shaderVisible
 	);
 
+	void ClearDepthBuffer();
+
 	///-------------------------------------------/// 
 	/// ゲッター・セッター
 	///-------------------------------------------///
@@ -168,11 +170,8 @@ private:
 	//DXCコンパイラの初期化
 	void InitializeDXCCompile();
 
-	//ImGuiの初期化
-	void InitializeImGui();
-
 	//FPS固定初期化
-	void initializeFixFPS();
+	void InitializeFixFPS();
 
 	//FPS固定更新
 	void UpdateFixFPS();

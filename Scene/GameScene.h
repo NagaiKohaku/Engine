@@ -1,6 +1,11 @@
 #pragma once
 #include "BaseScene.h"
 
+#include "Camera.h"
+#include "Object3D.h"
+#include "Object2D.h"
+#include "Audio.h"
+
 #include "memory"
 
 class GameScene : public BaseScene {
@@ -34,6 +39,8 @@ private:
 
 	//音声データ
 	SoundData soundData_;
+
+	std::unique_ptr<Object2D> sprite_;
 
 	//箱
 	std::unique_ptr<Object3D> cube_;

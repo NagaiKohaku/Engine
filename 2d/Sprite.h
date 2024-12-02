@@ -194,19 +194,6 @@ private:
 		Matrix4x4 uvTransform;
 	};
 
-	//座標変換行列データ
-	struct TransformationMatrix {
-		Matrix4x4 WVP;
-		Matrix4x4 World;
-	};
-
-	//座標変換データ
-	struct Transform {
-		Vector3 scale;
-		Vector3 rotate;
-		Vector3 translate;
-	};
-
 	///-------------------------------------------/// 
 	/// メンバ変数
 	///-------------------------------------------///
@@ -226,9 +213,6 @@ private:
 	//マテリアルリソース
 	Microsoft::WRL::ComPtr<ID3D12Resource> materialResource_ = nullptr;
 
-	//座標変換行列リソース
-	Microsoft::WRL::ComPtr<ID3D12Resource> WVPResource_ = nullptr;
-
 	/// === バッファリソース内のデータを指すポインタ === ///
 
 	//頂点データ
@@ -239,9 +223,6 @@ private:
 
 	//マテリアルデータ
 	Material* materialData_ = nullptr;
-
-	//座標変換行列データ
-	TransformationMatrix* WVPData_ = nullptr;
 
 	/// === バッファビュー === ///
 

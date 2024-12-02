@@ -1,49 +1,48 @@
 #include "object2d.hlsli"
 
+//マテリアル
 struct Material
 {
-    float32_t4 color;
-    int32_t enableLighting;
-    float32_t4x4 uvTransform;
+    float4 color;
+    int enableLighting;
+    float4x4 uvTransform;
 };
 
-struct DirectionalLight
-{
-    float32_t4 color;
-    float32_t3 direction;
-    float intensity;
-};
+//マテリアル
 ConstantBuffer<Material> gMaterial : register(b0);
 
-Texture2D<float32_t4> gTexture : register(t0);
+//テクスチャ
+Texture2D<float4> gTexture : register(t0);
 
+//サンプラー
 SamplerState gSampler : register(t0);
 
-ConstantBuffer<DirectionalLight> gDirectionLight : register(b1);
-
+//出力
 struct PixelShaderOutPut
 {
-    float32_t4 color : SV_TARGET0;
+    float4 color : SV_TARGET0;
 };
 
 PixelShaderOutPut main(VertexShaderOutput input)
 {
+    //出力
     PixelShaderOutPut output;
-    
-    float4 transformedUV = mul(float32_t4(input.texcoord, 0.0f, 1.0f), gMaterial.uvTransform);
-    
-    float32_t4 textureColor = gTexture.Sample(gSampler, transformedUV.xy);
 
-    if (gMaterial.enableLighting != 0)
+    //UV情報
+    float4 transformedUV = mul(float4(input.texcoord, 0.0f, 1.0f), gMaterial.uvTransform);
+
+    //テクスチャの色
+    float4 textureColor = gTexture.Sample(gSampler, transformedUV.xy);
+
+    //アルファ値が0であれば
+    if (textureColor.a == 0.0)
     {
-        float NdotL = dot(normalize(input.normal), -gDirectionLight.direction);
-        float cos = pow(NdotL * 0.5f + 0.5f, 2.0f);
-        output.color = gMaterial.color * textureColor * gDirectionLight.color * cos * gDirectionLight.intensity;
+        //処理をスキップ
+        discard;
     }
-    else
-    {
-        output.color = gMaterial.color * textureColor;
-    }
+
+    //マテリアル情報とテクスチャの色を合わせる
+    output.color = gMaterial.color * textureColor;
  
     return output;
 }
