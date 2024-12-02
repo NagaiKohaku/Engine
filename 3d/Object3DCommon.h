@@ -1,8 +1,14 @@
 #pragma once
 #include "d3dx12.h"
+#include "d3d12.h"
 
 #include "wrl.h"
 #include "vector"
+
+#include "Vector3.h"
+
+#include "DirectionalLight.h"
+#include "PointLight.h"
 
 class DirectXCommon;
 
@@ -28,6 +34,15 @@ public:
 	};
 
 	///-------------------------------------------/// 
+	/// 構造体
+	///-------------------------------------------///
+private:
+
+	struct CameraForGPU {
+		Vector3 worldPosition;
+	};
+
+	///-------------------------------------------/// 
 	/// メンバ関数
 	///-------------------------------------------///
 public:
@@ -42,6 +57,11 @@ public:
 	/// 初期化処理
 	/// </summary>
 	void Initialize();
+
+	/// <summary>
+	/// 更新処理
+	/// </summary>
+	void Update();
 
 	/// <summary>
 	/// 描画前処理
@@ -100,11 +120,23 @@ private:
 	//DirectX基底
 	DirectXCommon* dxCommon_ = nullptr;
 
+	//ブレンドモード
+	BlendType blendMode_;
+
 	//デフォルトカメラ
 	Camera* defaultCamera_ = nullptr;
 
-	//ブレンドモード
-	BlendType blendMode_;
+	//平行光源ライト
+	std::unique_ptr<DirectionalLight> directionalLight_;
+
+	//点光源ライト
+	std::unique_ptr<PointLight> pointLight_;
+
+	//バッファリソース内のデータを指すポインタ
+	CameraForGPU* cameraForGpuData = nullptr;
+
+	//バッファリソース
+	Microsoft::WRL::ComPtr<ID3D12Resource> cameraForGpuResource = nullptr;
 
 	//ルートシグネチャ
 	Microsoft::WRL::ComPtr<ID3D12RootSignature> rootSignature_ = nullptr;

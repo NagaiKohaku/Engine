@@ -61,10 +61,22 @@ public:
 	const Vector4& GetColor() { return materialData_->color; }
 
 	/// <summary>
+	/// 光沢度のゲッター
+	/// </summary>
+	/// <returns>光沢度</returns>
+	const float GetShininess() { return materialData_->shininess; }
+
+	/// <summary>
 	/// 色のセッター
 	/// </summary>
 	/// <param name="color">色</param>
 	void SetColor(const Vector4& color) { materialData_->color = color; }
+
+	/// <summary>
+	/// 光沢度のセッター
+	/// </summary>
+	/// <param name="shininess">光沢度</param>
+	void SetShininess(const float& shininess) { materialData_->shininess = shininess; }
 
 	///-------------------------------------------/// 
 	/// メンバ構造体
@@ -84,6 +96,7 @@ private:
 		int32_t enableLighting;
 		float padding[3];
 		Matrix4x4 uvTransform;
+		float shininess;
 	};
 
 	//モデルのマテリアルデータ

@@ -108,6 +108,7 @@ private:
 	struct TransformationMatrix {
 		Matrix4x4 WVP;
 		Matrix4x4 World;
+		Matrix4x4 WorldInverseTranspose;
 	};
 
 	//座標変換データ
@@ -115,13 +116,6 @@ private:
 		Vector3 scale;
 		Vector3 rotate;
 		Vector3 translate;
-	};
-
-	//平行光源
-	struct DirectionalLight {
-		Vector4 color;
-		Vector3 direction;
-		float intensity;
 	};
 
 	///-------------------------------------------/// 
@@ -137,11 +131,9 @@ private:
 
 	//バッファリソース
 	Microsoft::WRL::ComPtr<ID3D12Resource> WVPResource_ = nullptr;
-	Microsoft::WRL::ComPtr<ID3D12Resource> DirectionalLightResource_ = nullptr;
 
 	//バッファリソース内のデータを指すポインタ
 	TransformationMatrix* WVPData_ = nullptr;
-	DirectionalLight* directionalLightData_ = nullptr;
 
 	//座標データ
 	Transform transform_;

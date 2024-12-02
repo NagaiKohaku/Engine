@@ -178,7 +178,7 @@ void SpriteCommon::CreateGraphicsPipeline() {
 	//VertexShaderをコンパイルする
 	Microsoft::WRL::ComPtr<IDxcBlob> vertexShaderBlob =
 		dxCommon_->CompileShader(
-			L"Resource/Shader/Object3D.VS.hlsl",
+			L"Resource/Shader/Object2D.VS.hlsl",
 			L"vs_6_0"
 		);
 
@@ -187,7 +187,7 @@ void SpriteCommon::CreateGraphicsPipeline() {
 	//PixelShaderをコンパイルする
 	Microsoft::WRL::ComPtr<IDxcBlob> pixelShaderBlob =
 		dxCommon_->CompileShader(
-			L"Resource/Shader/Object3D.PS.hlsl",
+			L"Resource/Shader/Object2D.PS.hlsl",
 			L"ps_6_0"
 		);
 

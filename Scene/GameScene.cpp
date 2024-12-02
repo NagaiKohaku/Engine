@@ -142,7 +142,7 @@ void GameScene::Draw() {
 	//3DObjectの描画準備
 	Object3DCommon::GetInstance()->CommonDrawSetting();
 
-	//Object3Dの描画
+	////Object3Dの描画
 	cube_->Draw();
 
 	ball_->Draw();
