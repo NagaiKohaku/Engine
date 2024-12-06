@@ -14,6 +14,18 @@ class DirectXCommon;
 class DirectionalLight {
 
 	///-------------------------------------------/// 
+	/// 構造体
+	///-------------------------------------------///
+private:
+
+	//光源データ
+	struct LightData {
+		Vector4 color;     //色
+		Vector3 direction; //向き
+		float intensity;   //照度
+	};
+
+	///-------------------------------------------/// 
 	/// メンバ関数
 	///-------------------------------------------///
 public:
@@ -39,16 +51,15 @@ public:
 	void DisplayImGui();
 
 	///-------------------------------------------/// 
-	/// 構造体
+	/// ゲッター・セッター
 	///-------------------------------------------///
-private:
+public:
 
-	//光源データ
-	struct LightData {
-		Vector4 color;     //色
-		Vector3 direction; //向き
-		float intensity;   //照度
-	};
+	void SetColor(const Vector4& color) { lightData_->color = color; }
+
+	void SetDirection(const Vector3& direction) { lightData_->direction = direction; }
+
+	void SetIntensity(float intensity) { lightData_->intensity = intensity; }
 
 	///-------------------------------------------/// 
 	/// メンバ変数

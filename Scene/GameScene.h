@@ -40,8 +40,6 @@ private:
 	//音声データ
 	SoundData soundData_;
 
-	std::unique_ptr<Object2D> sprite_;
-
 	//箱
 	std::unique_ptr<Object3D> cube_;
 

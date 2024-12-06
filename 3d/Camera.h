@@ -58,6 +58,18 @@ public:
 	void SetTranslate(const Vector3& translate) { transform_.translate = translate; }
 
 	/// <summary>
+	/// デバッグカメラの角度のセッター
+	/// </summary>
+	/// <param name="rotate">角度</param>
+	void SetDebugRotate(const Vector3& rotate) { debugCameraTransform_.rotate = rotate; }
+
+	/// <summary>
+	/// デバッグカメラの座標のセッター
+	/// </summary>
+	/// <param name="translate">座標</param>
+	void SetDebugTranslate(const Vector3& translate) { debugCameraTransform_.translate = translate; }
+
+	/// <summary>
 	/// fovYのセッター
 	/// </summary>
 	/// <param name="fovY">fovY</param>
@@ -99,6 +111,10 @@ public:
 	/// <returns>座標</returns>
 	const Vector3& GetTranslate() const { return transform_.translate; }
 
+	/// <summary>
+	/// ワールド座標のゲッター
+	/// </summary>
+	/// <returns>ワールド座標</returns>
 	const Vector3& GetWorldTranslate() const { return { worldMatrix_.m[3][0],worldMatrix_.m[3][1],worldMatrix_.m[3][2] }; }
 
 	/// <summary>

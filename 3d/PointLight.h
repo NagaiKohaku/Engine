@@ -14,6 +14,21 @@ class DirectXCommon;
 class PointLight {
 
 	///-------------------------------------------/// 
+	/// 構造体
+	///-------------------------------------------///
+private:
+
+	//光源データ
+	struct LightData {
+		Vector4 color;    //色
+		Vector3 position; //座標
+		float intensity;  //照度
+		float radius;     //半径
+		float decay;      //減少度
+		float padding[2]; //穴埋め
+	};
+
+	///-------------------------------------------/// 
 	/// メンバ関数
 	///-------------------------------------------///
 public:
@@ -39,19 +54,19 @@ public:
 	void DisplayImGui();
 
 	///-------------------------------------------/// 
-	/// 構造体
+	/// ゲッター・セッター
 	///-------------------------------------------///
-private:
+public:
 
-	//光源データ
-	struct LightData {
-		Vector4 color;    //色
-		Vector3 position; //座標
-		float intensity;  //照度
-		float radius;     //半径
-		float decay;      //減少度
-		float padding[2]; //穴埋め
-	};
+	void SetPosition(const Vector3& position) { lightData_->position = position; }
+
+	void SetColor(const Vector4& color) { lightData_->color = color; }
+
+	void SetIntensity(float intensity) { lightData_->intensity = intensity; }
+
+	void SetRadius(float radius) { lightData_->radius = radius; }
+
+	void SetDecay(float decay) { lightData_->decay = decay; }
 
 	///-------------------------------------------/// 
 	/// メンバ変数

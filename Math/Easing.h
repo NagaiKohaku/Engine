@@ -18,3 +18,5 @@ Vector3 Lerp(const Vector3& v1, const Vector3& v2, float t);
 /// <param name="t"></param>
 /// <returns></returns>
 Vector3 SLerp(const Vector3& v1, const Vector3& v2, float t);
+
+float Lerp(float n1, float n2, float t);

@@ -5,11 +5,6 @@
 #include "wrl.h"
 #include "vector"
 
-#include "Vector3.h"
-
-#include "DirectionalLight.h"
-#include "PointLight.h"
-
 class DirectXCommon;
 
 class Object2DCommon {

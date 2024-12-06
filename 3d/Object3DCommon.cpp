@@ -37,6 +37,8 @@ void Object3DCommon::Initialize() {
 	//点光源ライトの初期化
 	pointLight_->Initialize();
 
+	pointLight_->SetIntensity(0.0f);
+
 	//カメラ情報のバッファリソースの生成
 	cameraForGpuResource = dxCommon_->CreateBufferResource(sizeof(CameraForGPU));
 

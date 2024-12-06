@@ -5,6 +5,7 @@
 #include "Object2DCommon.h"
 #include "ModelManager.h"
 #include "SpriteManager.h"
+#include "ParticleManager.h"
 
 #include "imgui.h"
 
@@ -18,13 +19,17 @@ void GameScene::Initialize() {
 	camera_ = std::make_unique<Camera>();
 
 	//カメラの座標
-	camera_->SetTranslate({ 0.0f,0.0f,0.0f });
+	camera_->SetDebugTranslate({ 0.0f,3.0f,0.0f });
 
 	//カメラの角度
-	camera_->SetRotate({ 0.0f,0.0f,0.0f });
+	camera_->SetDebugRotate({ 0.0f,0.0f,0.0f });
+
+	camera_->SetDebugCameraFlag(true);
 
 	//デフォルトカメラを設定
 	Object3DCommon::GetInstance()->SetDefaultCamera(camera_.get());
+
+	ParticleManager::GetInstance()->SetDefaultCamera(camera_.get());
 
 	/// === リソースの読み込み === ///
 
@@ -44,16 +49,6 @@ void GameScene::Initialize() {
 	/// === オブジェクトの生成 === ///
 
 	/// === タイトルの生成 === ///
-
-	sprite_ = std::make_unique<Object2D>();
-
-	sprite_->SetTranslate({ 640.0f,360.0f });
-
-	sprite_->SetSize({ 1280.0f,720.0f });
-
-	sprite_->SetSprite("Title");
-
-	sprite_->GetSprite()->SetAnchorPoint({ 0.5f,0.5f });
 
 	/// === 箱の生成 === ///
 
@@ -80,9 +75,6 @@ void GameScene::Initialize() {
 	//モデルの設定
 	ball_->SetModel("MonsterBall");
 
-	//カメラの追従対象に設定
-	camera_->SetTrackingObject(ball_.get());
-
 	/// === 地面の生成 === ///
 
 	//地面の生成
@@ -97,6 +89,10 @@ void GameScene::Initialize() {
 	/// === SEの生成 === ///
 
 	soundObject_ = Audio::GetInstance()->CreateSoundObject(soundData_, false);
+
+	ParticleManager::GetInstance()->CreateParticleGroup("Particle", "star.png");
+
+	ParticleManager::GetInstance()->SetAcceleration("Particle", Vector3(0.0f, 5.0f, 0.0f), AABB({ -1.0f,-1.0f,-1.0f }, { 1.0f,1.0f,1.0f }));
 }
 
 void GameScene::Finalize() {
@@ -110,14 +106,24 @@ void GameScene::Update() {
 	//カメラをデバッグ状態で更新
 	camera_->Update();
 
-	sprite_->Update();
-
 	//3Dオブジェクトの更新
 	cube_->Update();
 
 	ball_->Update();
 
 	ground_->Update();
+
+	ParticleManager::GetInstance()->Emit(
+		"Particle",
+		Vector3(0.0f, 0.0f, 0.0f),
+		AABB({ -1.0f,0.0f,-1.0f }, { 1.0f,0.0f,1.0f }),
+		Vector3(-1.0f, -2.0f, -1.0f),
+		Vector3(1.0f, -1.0f, 1.0f),
+		1.0f,
+		3.0f,
+		true,
+		2
+	);
 
 	//ImGuiを起動
 	ImGui::Begin("Scene");
@@ -144,18 +150,15 @@ void GameScene::Update() {
 		ImGui::TreePop();
 	}
 
-	if (ImGui::TreeNode("Sprite")) {
-
-		sprite_->DisplayImGui();
-
-		ImGui::TreePop();
-	}
-
 	if (ImGui::Button("Start Audio")) {
 
 		//音声データの再生
 		Audio::GetInstance()->StartSound(soundObject_);
 	}
+
+	ImGui::Text("Shift + LeftClick : Move Camera");
+	ImGui::Text("Shift + RightClick : Rotate Camera");
+	ImGui::Text("Shift + MiddleWheel : Move Offset Camera");
 
 	//ImGuiの終了
 	ImGui::End();
@@ -168,8 +171,6 @@ void GameScene::Draw() {
 
 	//Spriteの描画準備
 	Object2DCommon::GetInstance()->CommonDrawSetting();
-
-	sprite_->Draw();
 
 	//深度情報のリセット
 	DirectXCommon::GetInstance()->ClearDepthBuffer();

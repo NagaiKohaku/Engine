@@ -7,6 +7,7 @@
 #include "ModelCommon.h"
 #include "TextureManager.h"
 #include "ModelManager.h"
+#include "ParticleCommon.h"
 #include "ParticleManager.h";
 #include "Input.h"
 #include "Audio.h"
@@ -50,6 +51,9 @@ int WINAPI WinMain(HINSTANCE, HINSTANCE, LPSTR, int) {
 	//モデル基底
 	ModelCommon* modelCommon = ModelCommon::GetInstance();
 	modelCommon->Initialize();
+
+	ParticleCommon* particleCommon = ParticleCommon::GetInstance();
+	particleCommon->Initialize();
 
 	//パーティクルマネージャー
 	ParticleManager* particleManager = ParticleManager::GetInstance();
@@ -103,6 +107,9 @@ int WINAPI WinMain(HINSTANCE, HINSTANCE, LPSTR, int) {
 		//シーンの更新
 		sceneManager->Update();
 
+		//パーティクルの更新
+		particleManager->Update();
+
 		//ImGuiの受付終了
 		imGuiManager->End();
 
@@ -118,6 +125,9 @@ int WINAPI WinMain(HINSTANCE, HINSTANCE, LPSTR, int) {
 
 		//シーンの描画
 		sceneManager->Draw();
+
+		//パーティクルの描画
+		particleManager->Draw();
 
 		//ImGuiの描画
 		imGuiManager->Draw();

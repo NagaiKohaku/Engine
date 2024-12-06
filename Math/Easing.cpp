@@ -37,3 +37,12 @@ Vector3 SLerp(const Vector3& v1, const Vector3& v2, float t) {
 
 	return result;
 }
+
+float Lerp(float n1, float n2, float t) {
+
+	float result;
+
+	result = (1.0f - t) * n1 + t * n2;
+
+	return result;
+}
