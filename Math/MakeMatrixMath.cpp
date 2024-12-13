@@ -94,13 +94,13 @@ Matrix4x4 MakeAffineMatrix(const Vector3& scale, const Vector3& rotate, const Ve
 	Matrix4x4 rotateXMatrix = MakeRotateXMatrix(rotate.x);
 	Matrix4x4 rotateYMatrix = MakeRotateYMatrix(rotate.y);
 	Matrix4x4 rotateZMatrix = MakeRotateZMatrix(rotate.z);
-	Matrix4x4 rotateMatrix = Multiply(rotateXMatrix, Multiply(rotateYMatrix, rotateZMatrix));
+	Matrix4x4 rotateMatrix = rotateXMatrix * (rotateYMatrix * rotateZMatrix);
 
 	// 平行移動行列
 	Matrix4x4 translateMatrix = MakeTranslateMatrix(translate);
 
 	// 合成（スケール -> 回転 -> 平行移動）
-	return Multiply(Multiply(scaleMatrix, rotateMatrix), translateMatrix);
+	return (scaleMatrix * rotateMatrix) * translateMatrix;
 }
 
 ///=====================================================///

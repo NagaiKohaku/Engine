@@ -8,7 +8,7 @@
 #include "TextureManager.h"
 #include "ModelManager.h"
 #include "ParticleCommon.h"
-#include "ParticleManager.h";
+#include "ParticleManager.h"
 #include "Input.h"
 #include "Audio.h"
 #include "ImGuiManager.h"

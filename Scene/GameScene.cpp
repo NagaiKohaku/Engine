@@ -18,13 +18,10 @@ void GameScene::Initialize() {
 	//カメラを生成
 	camera_ = std::make_unique<Camera>();
 
-	//カメラの座標
-	camera_->SetDebugTranslate({ 0.0f,3.0f,0.0f });
-
-	//カメラの角度
-	camera_->SetDebugRotate({ 0.0f,0.0f,0.0f });
-
 	camera_->SetDebugCameraFlag(true);
+
+	//カメラの座標
+	camera_->GetWorldTransform().SetTranslate({ 0.0f,3.0f,0.0f });
 
 	//デフォルトカメラを設定
 	Object3DCommon::GetInstance()->SetDefaultCamera(camera_.get());
@@ -37,10 +34,6 @@ void GameScene::Initialize() {
 	SpriteManager::GetInstance()->LoadSprite("Title", "RockShotTitle");
 
 	//モデルのロード
-	ModelManager::GetInstance()->CreateCube("MonsterCube", "monsterBall");
-
-	ModelManager::GetInstance()->CreateSphere("MonsterBall", "monsterBall");
-
 	ModelManager::GetInstance()->LoadModel("Ground", "terrain");
 
 	//音声データの読み込み
@@ -56,10 +49,13 @@ void GameScene::Initialize() {
 	cube_ = std::make_unique<Object3D>();
 
 	//座標の設定
-	cube_->SetTranslate({ 0.0f,1.0f,0.0f });
+	cube_->GetWorldTransform().SetTranslate({ 0.0f,1.0f,0.0f });
 
 	//モデルの設定
-	cube_->SetModel("MonsterCube");
+	cube_->SetModel("Cube");
+
+	//モデルの色を指定
+	cube_->GetModel()->SetColor({ 0.5f,0.0f,0.0f,1.0f });
 
 	/// === 球の生成 === ///
 
@@ -67,13 +63,18 @@ void GameScene::Initialize() {
 	ball_ = std::make_unique<Object3D>();
 
 	//座標の設定
-	ball_->SetTranslate({ 0.0f,3.0f,0.0f });
+	ball_->GetWorldTransform().SetTranslate({ 0.0f,3.0f,0.0f });
 
 	//角度の設定
-	ball_->SetRotate({ 0.0f,static_cast<float>(std::numbers::pi) / 180.0f * -90.0f,0.0f });
+	ball_->GetWorldTransform().SetRotate({ 0.0f,static_cast<float>(std::numbers::pi) / 180.0f * -90.0f,0.0f });
 
 	//モデルの設定
-	ball_->SetModel("MonsterBall");
+	ball_->SetModel("Sphere");
+
+	//モデルの色の指定
+	ball_->GetModel()->SetColor({ 0.5f,0.f,0.0f,1.0f });
+
+	camera_->SetTrackingObject(ball_.get());
 
 	/// === 地面の生成 === ///
 
@@ -81,7 +82,7 @@ void GameScene::Initialize() {
 	ground_ = std::make_unique<Object3D>();
 
 	//角度の設定
-	ground_->SetRotate({ 0.0f,static_cast<float>(std::numbers::pi) / 180.0f * -90.0f,0.0f });
+	ground_->GetWorldTransform().SetRotate({ 0.0f,static_cast<float>(std::numbers::pi) / 180.0f * -90.0f,0.0f });
 
 	//モデルの設定
 	ground_->SetModel("Ground");

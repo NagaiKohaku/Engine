@@ -67,7 +67,7 @@ void Object2D::Update() {
 	Matrix4x4 projectionMatrix = MakeOrthographicMatrix(0.0f, 0.0f, WinApp::kClientWidth, WinApp::kClientHeight, 0.0f, 100.0f);
 
 	//WVPデータを設定
-	WVPData_->WVP = Multiply(worldMatrix, Multiply(viewMatrix, projectionMatrix));
+	WVPData_->WVP = worldMatrix * (viewMatrix * projectionMatrix);
 	WVPData_->World = worldMatrix;
 	WVPData_->WorldInverseTranspose = Inverse4x4(worldMatrix);
 }

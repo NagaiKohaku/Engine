@@ -35,20 +35,6 @@ public:
 	void LoadModel(const std::string& modelName, const std::string& modelFileName);
 
 	/// <summary>
-	/// 球体モデルの生成
-	/// </summary>
-	/// <param name="modelName">モデル名</param>
-	/// <param name="textureFileName">テクスチャのファイル名</param>
-	void CreateSphere(const std::string& modelName, const std::string& textureFileName = "white_128x128.png");
-
-	/// <summary>
-	/// 立方体モデルの生成
-	/// </summary>
-	/// <param name="modelName">モデル名</param>
-	/// <param name="textureFileName">テクスチャのファイル名</param>
-	void CreateCube(const std::string& modelName, const std::string& textureFileName = "white_128x128.png");
-
-	/// <summary>
 	/// モデルの検索
 	/// </summary>
 	/// <param name="modelName">モデル名</param>

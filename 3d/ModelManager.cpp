@@ -17,14 +17,11 @@ void ModelManager::Initialize() {
 	//モデル基底のインスタンスを取得
 	modelCommon_ = ModelCommon::GetInstance();
 
-	//モデルデータ
-	std::unique_ptr<Model> model = std::make_unique<Model>();
+	//球体モデルの読み込み
+	LoadModel("Sphere", "sphere");
 
-	//球体モデルの作成とテクスチャの読み込み
-	model->InitializeSphere("Resource/Texture/", "white_128x128.png");
-
-	//モデル名とモデルデータをコンテナに登録
-	models_.insert(std::make_pair("Default", std::move(model)));
+	//正方形モデルの読み込み
+	LoadModel("Cube", "cube");
 }
 
 ///=====================================================/// 
@@ -44,47 +41,6 @@ void ModelManager::LoadModel(const std::string& modelName, const std::string& mo
 
 	//モデルの読み込み
 	model->Initialize("Resource/Model/" + modelFileName, modelFileName + ".obj");
-
-	//モデル名とモデルデータをコンテナに登録
-	models_.insert(std::make_pair(modelName, std::move(model)));
-}
-
-///=====================================================/// 
-/// 球体モデルの生成
-///=====================================================///
-void ModelManager::CreateSphere(const std::string& modelName, const std::string& textureFileName) {
-
-	//読み込み済みモデルの検索
-	if (models_.contains(modelName)) {
-
-		//読み込み済みなら早期return
-		return;
-	}
-
-	//モデルデータ
-	std::unique_ptr<Model> model = std::make_unique<Model>();
-
-	//球体モデルの作成とテクスチャの読み込み
-	model->InitializeSphere("Resource/Texture/", textureFileName + ".png");
-
-	//モデル名とモデルデータをコンテナに登録
-	models_.insert(std::make_pair(modelName, std::move(model)));
-}
-
-void ModelManager::CreateCube(const std::string& modelName, const std::string& textureFileName) {
-
-	//読み込み済みモデルの検索
-	if (models_.contains(modelName)) {
-
-		//読み込み済みなら早期return
-		return;
-	}
-
-	//モデルデータ
-	std::unique_ptr<Model> model = std::make_unique<Model>();
-
-	//球体モデルの作成とテクスチャの読み込み
-	model->InitializeCube("Resource/Texture", textureFileName + ".png");
 
 	//モデル名とモデルデータをコンテナに登録
 	models_.insert(std::make_pair(modelName, std::move(model)));

@@ -58,7 +58,7 @@ void Object3DCommon::Initialize() {
 void Object3DCommon::Update() {
 
 	//カメラ位置を取得
-	cameraForGpuData->worldPosition = defaultCamera_->GetWorldTranslate();
+	cameraForGpuData->worldPosition = defaultCamera_->GetWorldTransform().GetWorldTranslate();
 
 	//平行光源ライトのImGuiを表示
 	directionalLight_->DisplayImGui();
