@@ -120,6 +120,15 @@
     <ClCompile Include="3d\WorldTransform.cpp">
       <Filter>ソース ファイル</Filter>
     </ClCompile>
+    <ClCompile Include="3d\Line.cpp">
+      <Filter>ソース ファイル</Filter>
+    </ClCompile>
+    <ClCompile Include="DebugObjectCommon.cpp">
+      <Filter>ソース ファイル</Filter>
+    </ClCompile>
+    <ClCompile Include="DebugLine.cpp">
+      <Filter>ソース ファイル</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Base\Audio.h">
@@ -227,11 +236,21 @@
     <ClInclude Include="3d\WorldTransform.h">
       <Filter>ヘッダー ファイル</Filter>
     </ClInclude>
+    <ClInclude Include="3d\Line.h">
+      <Filter>ヘッダー ファイル</Filter>
+    </ClInclude>
+    <ClInclude Include="DebugObjectCommon.h">
+      <Filter>ヘッダー ファイル</Filter>
+    </ClInclude>
+    <ClInclude Include="DebugLine.h">
+      <Filter>ヘッダー ファイル</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <None Include="Resource\Shaders\Object3d.hlsli" />
     <None Include="Resource\Shaders\Particle.hlsli" />
     <None Include="Resource\Shader\Object2d.hlsli" />
+    <None Include="Resource\Shader\DebugObject.hlsli" />
   </ItemGroup>
   <ItemGroup>
     <FxCompile Include="Resource\Shaders\Object3d.PS.hlsl" />
@@ -240,5 +259,7 @@
     <FxCompile Include="Resource\Shaders\Particle.VS.hlsl" />
     <FxCompile Include="Resource\Shader\Object2d.PS.hlsl" />
     <FxCompile Include="Resource\Shader\Object2d.VS.hlsl" />
+    <FxCompile Include="Resource\Shader\DebugObject.PS.hlsl" />
+    <FxCompile Include="Resource\Shader\DebugObject.VS.hlsl" />
   </ItemGroup>
 </Project>

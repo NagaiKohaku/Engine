@@ -96,22 +96,16 @@ void Camera::Update() {
 
 		/// === 角度の設定 === ///
 
-		//現在の角度
-		Vector3 currentRotate = debugTransform_.GetRotate();
-
 		//今フレームの回転角度を加える
-		debugTransform_.SetRotate(currentRotate + rotateDelta);
+		debugTransform_.rotate_ += rotateDelta;
 
 		//角度行列を生成
 		Matrix4x4 matRot_ =
-			(MakeRotateXMatrix(debugTransform_.GetRotate().x) *
-			MakeRotateYMatrix(debugTransform_.GetRotate().y)) *
-			MakeRotateZMatrix(debugTransform_.GetRotate().z);
+			(MakeRotateXMatrix(debugTransform_.rotate_.x) *
+				MakeRotateYMatrix(debugTransform_.rotate_.y)) *
+			MakeRotateZMatrix(debugTransform_.rotate_.z);
 
 		/// === 座標の設定 === ///
-
-		//現在の座標
-		Vector3 currentTranslate = debugTransform_.GetTranslate();
 
 		//追従対象からカメラまでのオフセット
 		Vector3 offset = { 0.0f,0.0f,debugCameraOffsetZ_ };
@@ -125,7 +119,7 @@ void Camera::Update() {
 		debugTransform_.SetOffset(offset);
 
 		//今フレームの移動量を加える
-		debugTransform_.SetTranslate(currentTranslate + velocity);
+		debugTransform_.translate_ += velocity;
 
 		/// === 行列の計算 === ///
 
@@ -152,9 +146,9 @@ void Camera::Update() {
 
 			//角度行列を生成
 			Matrix4x4 matRot_ =
-				(MakeRotateXMatrix(transform_.GetRotate().x) *
-					MakeRotateYMatrix(transform_.GetRotate().y)) *
-				MakeRotateZMatrix(transform_.GetRotate().z);
+				(MakeRotateXMatrix(transform_.rotate_.x) *
+					MakeRotateYMatrix(transform_.rotate_.y)) *
+				MakeRotateZMatrix(transform_.rotate_.z);
 
 			//追従対象からカメラまでのオフセット
 			Vector3 offset = { 0.0f,0.0f,offsetZ_ };
@@ -165,7 +159,7 @@ void Camera::Update() {
 			transform_.SetOffset(offset);
 
 			//カメラ座標を追従対象を中心にオフセット分ずらす
-			transform_.SetTranslate(object_->GetWorldTransform().GetTranslate());
+			transform_.translate_ = object_->GetWorldTransform().GetWorldTranslate();
 		}
 
 		/// === 行列の計算 === ///

@@ -32,23 +32,11 @@ public:
 	///-------------------------------------------///
 public:
 
-	/// <summary>
-	/// 座標のゲッター
-	/// </summary>
-	/// <returns>座標</returns>
-	const Vector3& GetTranslate() const { return translate_; }
+	const Vector3& GetForward() const;
 
-	/// <summary>
-	/// 角度のゲッター
-	/// </summary>
-	/// <returns>角度</returns>
-	const Vector3& GetRotate() const { return rotate_; }
+	const Vector3& GetUp() const;
 
-	/// <summary>
-	/// 大きさのゲッター
-	/// </summary>
-	/// <returns>大きさ</returns>
-	const Vector3& GetScale() const { return scale_; }
+	const Vector3& GetRight() const;
 
 	/// <summary>
 	/// ワールド行列のゲッター
@@ -57,22 +45,10 @@ public:
 	const Matrix4x4& GetWorldMatrix() const { return worldMatrix_; }
 
 	/// <summary>
-	/// 座標のセッター
+	/// ワールド座標のゲッター
 	/// </summary>
-	/// <param name="vector">座標</param>
-	void SetTranslate(const Vector3& vector) { translate_ = vector; }
-
-	/// <summary>
-	/// 角度のセッター
-	/// </summary>
-	/// <param name="vector">角度</param>
-	void SetRotate(const Vector3& vector) { rotate_ = vector; }
-
-	/// <summary>
-	/// 大きさのセッター
-	/// </summary>
-	/// <param name="vector">大きさ</param>
-	void SetScale(const Vector3& vector) { scale_ = vector; }
+	/// <returns>ワールド座標</returns>
+	const Vector3& GetWorldTranslate() const;
 
 	/// <summary>
 	/// ワールド行列のセッター
@@ -87,18 +63,12 @@ public:
 	void SetOffset(const Vector3& vector) { offset_ = vector; }
 
 	/// <summary>
-	/// ワールド座標のゲッター
-	/// </summary>
-	/// <returns>ワールド座標</returns>
-	const Vector3& GetWorldTranslate() const;
-
-	/// <summary>
 	/// 親オブジェクトのセッター
 	/// </summary>
 	/// <param name="parent"></param>
 	void SetParent(const WorldTransform* parent);
 
-private:
+public:
 
 	//座標
 	Vector3 translate_;
@@ -108,6 +78,8 @@ private:
 
 	//大きさ
 	Vector3 scale_;
+
+private:
 
 	//ワールド行列
 	Matrix4x4 worldMatrix_;

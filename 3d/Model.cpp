@@ -86,6 +86,7 @@ void Model::Draw() {
 	//頂点データの設定
 	modelCommon_->GetDxCommon()->GetCommandList()->IASetVertexBuffers(0, 1, &vertexBufferView_);
 
+	//頂点番号の設定
 	modelCommon_->GetDxCommon()->GetCommandList()->IASetIndexBuffer(&indexBufferView_);
 
 	//マテリアルデータの設定

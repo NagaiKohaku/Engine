@@ -53,16 +53,10 @@ public:
 public:
 
 	/// <summary>
-	/// モデルのセッター
+	/// ワールドトランスフォームのゲッター
 	/// </summary>
-	/// <param name="modelName">ファイル名</param>
-	void SetModel(const std::string& modelName);
-
-	/// <summary>
-	/// カメラのセッター
-	/// </summary>
-	/// <param name="camera">カメラ</param>
-	void SetCamera(Camera* camera) { camera_ = camera; }
+	/// <returns>ワールドトランスフォーム</returns>
+	WorldTransform& GetWorldTransform() { return transform_; }
 
 	/// <summary>
 	/// モデルのゲッター
@@ -71,10 +65,16 @@ public:
 	Model* GetModel() const { return model_;}
 
 	/// <summary>
-	/// ワールドトランスフォームのゲッター
+	/// カメラのセッター
 	/// </summary>
-	/// <returns>ワールドトランスフォーム</returns>
-	WorldTransform& GetWorldTransform() { return transform_; }
+	/// <param name="camera">カメラ</param>
+	void SetCamera(Camera* camera) { camera_ = camera; }
+
+	/// <summary>
+	/// モデルのセッター
+	/// </summary>
+	/// <param name="modelName">ファイル名</param>
+	void SetModel(const std::string& modelName);
 
 	///-------------------------------------------/// 
 	/// メンバ構造体
@@ -99,6 +99,9 @@ private:
 	//カメラ
 	Camera* camera_;
 
+	//座標データ
+	WorldTransform transform_;
+
 	//バッファリソース
 	Microsoft::WRL::ComPtr<ID3D12Resource> WVPResource_ = nullptr;
 
@@ -107,7 +110,4 @@ private:
 
 	//モデル情報
 	Model* model_;
-
-	//座標データ
-	WorldTransform transform_;
 };

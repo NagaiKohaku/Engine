@@ -29,6 +29,10 @@ void WorldTransform::DisplayImGui() {
 
 	if (ImGui::TreeNode("WorldTransform")) {
 
+		Vector3 up = GetUp();
+		Vector3 forward = GetForward();
+		Vector3 right = GetRight();
+
 		ImGui::DragFloat3("translate", &translate_.x, 0.1f);
 		ImGui::DragFloat3("rotate", &rotate_.x, 0.01f);
 		ImGui::DragFloat3("scale", &scale_.x, 0.1f);
@@ -36,6 +40,42 @@ void WorldTransform::DisplayImGui() {
 		ImGui::TreePop();
 	}
 
+}
+
+const Vector3& WorldTransform::GetForward() const {
+
+	Matrix4x4 rotateMat =
+		(MakeRotateXMatrix(rotate_.x) *
+			MakeRotateYMatrix(rotate_.y)) *
+		MakeRotateZMatrix(rotate_.z);
+
+	Vector3 result = { rotateMat.m[2][0],rotateMat.m[2][1],rotateMat.m[2][2] };
+
+	return result;
+}
+
+const Vector3& WorldTransform::GetUp() const {
+
+	Matrix4x4 rotateMat =
+		(MakeRotateXMatrix(rotate_.x) *
+			MakeRotateYMatrix(rotate_.y)) *
+		MakeRotateZMatrix(rotate_.z);
+
+	Vector3 result = { rotateMat.m[1][0],rotateMat.m[1][1],rotateMat.m[1][2] };
+
+	return result;
+}
+
+const Vector3& WorldTransform::GetRight() const {
+
+	Matrix4x4 rotateMat =
+		(MakeRotateXMatrix(rotate_.x) *
+			MakeRotateYMatrix(rotate_.y)) *
+		MakeRotateZMatrix(rotate_.z);
+
+	Vector3 result = { rotateMat.m[0][0],rotateMat.m[0][1],rotateMat.m[0][2] };
+
+	return result;
 }
 
 const Vector3& WorldTransform::GetWorldTranslate() const {

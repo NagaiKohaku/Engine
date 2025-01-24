@@ -21,7 +21,7 @@ void GameScene::Initialize() {
 	camera_->SetDebugCameraFlag(true);
 
 	//カメラの座標
-	camera_->GetWorldTransform().SetTranslate({ 0.0f,3.0f,0.0f });
+	camera_->GetWorldTransform().translate_ = { 0.0f,3.0f,0.0f };
 
 	//デフォルトカメラを設定
 	Object3DCommon::GetInstance()->SetDefaultCamera(camera_.get());
@@ -29,9 +29,6 @@ void GameScene::Initialize() {
 	ParticleManager::GetInstance()->SetDefaultCamera(camera_.get());
 
 	/// === リソースの読み込み === ///
-
-	//スプライトのロード
-	SpriteManager::GetInstance()->LoadSprite("Title", "RockShotTitle");
 
 	//モデルのロード
 	ModelManager::GetInstance()->LoadModel("Ground", "terrain");
@@ -49,7 +46,7 @@ void GameScene::Initialize() {
 	cube_ = std::make_unique<Object3D>();
 
 	//座標の設定
-	cube_->GetWorldTransform().SetTranslate({ 0.0f,1.0f,0.0f });
+	cube_->GetWorldTransform().translate_ = { 0.0f,1.0f,0.0f };
 
 	//モデルの設定
 	cube_->SetModel("Cube");
@@ -63,10 +60,10 @@ void GameScene::Initialize() {
 	ball_ = std::make_unique<Object3D>();
 
 	//座標の設定
-	ball_->GetWorldTransform().SetTranslate({ 0.0f,3.0f,0.0f });
+	ball_->GetWorldTransform().translate_ = { 0.0f,3.0f,0.0f };
 
 	//角度の設定
-	ball_->GetWorldTransform().SetRotate({ 0.0f,static_cast<float>(std::numbers::pi) / 180.0f * -90.0f,0.0f });
+	ball_->GetWorldTransform().rotate_ = { 0.0f,static_cast<float>(std::numbers::pi) / 180.0f * -90.0f,0.0f };
 
 	//モデルの設定
 	ball_->SetModel("Sphere");
@@ -82,7 +79,7 @@ void GameScene::Initialize() {
 	ground_ = std::make_unique<Object3D>();
 
 	//角度の設定
-	ground_->GetWorldTransform().SetRotate({ 0.0f,static_cast<float>(std::numbers::pi) / 180.0f * -90.0f,0.0f });
+	ground_->GetWorldTransform().rotate_ = { 0.0f,static_cast<float>(std::numbers::pi) / 180.0f * -90.0f,0.0f };
 
 	//モデルの設定
 	ground_->SetModel("Ground");
@@ -90,10 +87,6 @@ void GameScene::Initialize() {
 	/// === SEの生成 === ///
 
 	soundObject_ = Audio::GetInstance()->CreateSoundObject(soundData_, false);
-
-	ParticleManager::GetInstance()->CreateParticleGroup("Particle", "star.png");
-
-	ParticleManager::GetInstance()->SetAcceleration("Particle", Vector3(0.0f, 5.0f, 0.0f), AABB({ -1.0f,-1.0f,-1.0f }, { 1.0f,1.0f,1.0f }));
 }
 
 void GameScene::Finalize() {
@@ -113,18 +106,6 @@ void GameScene::Update() {
 	ball_->Update();
 
 	ground_->Update();
-
-	ParticleManager::GetInstance()->Emit(
-		"Particle",
-		Vector3(0.0f, 0.0f, 0.0f),
-		AABB({ -1.0f,0.0f,-1.0f }, { 1.0f,0.0f,1.0f }),
-		Vector3(-1.0f, -2.0f, -1.0f),
-		Vector3(1.0f, -1.0f, 1.0f),
-		1.0f,
-		3.0f,
-		true,
-		2
-	);
 
 	//ImGuiを起動
 	ImGui::Begin("Scene");
