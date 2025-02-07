@@ -9,71 +9,87 @@
 
 class DirectXCommon;
 
+class Camera;
+
 class DebugObjectCommon {
 
 	///-------------------------------------------/// 
-	/// ƒƒ“ƒoŠÖ”
+	/// ãƒ¡ãƒ³ãƒé–¢æ•°
 	///-------------------------------------------///
 public:
 
 	/// <summary>
-	/// ƒVƒ“ƒOƒ‹ƒgƒ“ƒCƒ“ƒXƒ^ƒ“ƒX
+	/// ã‚·ãƒ³ã‚°ãƒ«ãƒˆãƒ³ã‚¤ãƒ³ã‚¹ã‚¿ãƒ³ã‚¹
 	/// </summary>
-	/// <returns>ƒCƒ“ƒXƒ^ƒ“ƒX</returns>
+	/// <returns>ã‚¤ãƒ³ã‚¹ã‚¿ãƒ³ã‚¹</returns>
 	static DebugObjectCommon* GetInstance();
 
 	/// <summary>
-	/// ‰Šú‰»ˆ—
+	/// åˆæœŸåŒ–å‡¦ç†
 	/// </summary>
 	void Initialize();
 
 	/// <summary>
-	/// XVˆ—
+	/// æ›´æ–°å‡¦ç†
 	/// </summary>
 	void Update();
 
 	/// <summary>
-	/// •`‰æ‘Oˆ—
+	/// æç”»å‰å‡¦ç†
 	/// </summary>
 	void CommonDrawSetting();
 
 	///-------------------------------------------/// 
-	/// ƒZƒbƒ^[EƒQƒbƒ^[
+	/// ã‚»ãƒƒã‚¿ãƒ¼ãƒ»ã‚²ãƒƒã‚¿ãƒ¼
 	///-------------------------------------------///
 public:
 
 	/// <summary>
-	/// DirectXŠî’ê‚ÌƒQƒbƒ^[
+	/// DirectXåŸºåº•ã®ã‚²ãƒƒã‚¿ãƒ¼
 	/// </summary>
 	/// <returns></returns>
 	DirectXCommon* GetDxCommon() const { return dxCommon_; }
 
+	/// <summary>
+	/// ã‚«ãƒ¡ãƒ©ã®ã‚»ãƒƒã‚¿ãƒ¼
+	/// </summary>
+	/// <param name="ptr"></param>
+	void SetDefaultCamera(Camera* ptr) { camera_ = ptr; }
+
+	/// <summary>
+	/// ã‚«ãƒ¡ãƒ©ã®ã‚²ãƒƒã‚¿ãƒ¼
+	/// </summary>
+	/// <returns></returns>
+	Camera* GetCamera() const { return camera_; }
+
 	///-------------------------------------------/// 
-	/// ƒNƒ‰ƒX“àˆ—ŠÖ”
+	/// ã‚¯ãƒ©ã‚¹å†…å‡¦ç†é–¢æ•°
 	///-------------------------------------------///
 private:
 
 	/// <summary>
-	/// ƒ‹[ƒgƒVƒOƒlƒ`ƒƒ‚Ì¶¬
+	/// ãƒ«ãƒ¼ãƒˆã‚·ã‚°ãƒãƒãƒ£ã®ç”Ÿæˆ
 	/// </summary>
 	void CreateRootSignature();
 
 	/// <summary>
-	/// ƒOƒ‰ƒtƒBƒbƒNƒpƒCƒvƒ‰ƒCƒ“‚Ì¶¬
+	/// ã‚°ãƒ©ãƒ•ã‚£ãƒƒã‚¯ãƒ‘ã‚¤ãƒ—ãƒ©ã‚¤ãƒ³ã®ç”Ÿæˆ
 	/// </summary>
 	void CreateGraphicsPipeline();
 
 	///-------------------------------------------/// 
-	/// ƒƒ“ƒo•Ï”
+	/// ãƒ¡ãƒ³ãƒå¤‰æ•°
 	///-------------------------------------------///
 private:
 
-	//DirectXŠî’ê
+	//DirectXåŸºåº•
 	DirectXCommon* dxCommon_ = nullptr;
 
-	//ƒ‹[ƒgƒVƒOƒlƒ`ƒƒ
+	Camera* camera_ = nullptr;
+
+	//ãƒ«ãƒ¼ãƒˆã‚·ã‚°ãƒãƒãƒ£
 	Microsoft::WRL::ComPtr<ID3D12RootSignature> rootSignature_ = nullptr;
 
-	//ƒOƒ‰ƒtƒBƒbƒNƒpƒCƒvƒ‰ƒCƒ“ƒXƒe[ƒg
+	//ã‚°ãƒ©ãƒ•ã‚£ãƒƒã‚¯ãƒ‘ã‚¤ãƒ—ãƒ©ã‚¤ãƒ³ã‚¹ãƒ†ãƒ¼ãƒˆ
 	Microsoft::WRL::ComPtr<ID3D12PipelineState> graphicsPipelineState_ = nullptr;
 };

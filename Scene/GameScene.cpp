@@ -3,6 +3,8 @@
 #include "DirectXCommon.h"
 #include "Object3DCommon.h"
 #include "Object2DCommon.h"
+#include "DebugObjectCommon.h"
+
 #include "ModelManager.h"
 #include "SpriteManager.h"
 #include "ParticleManager.h"
@@ -25,6 +27,8 @@ void GameScene::Initialize() {
 
 	//デフォルトカメラを設定
 	Object3DCommon::GetInstance()->SetDefaultCamera(camera_.get());
+
+	DebugObjectCommon::GetInstance()->SetDefaultCamera(camera_.get());
 
 	ParticleManager::GetInstance()->SetDefaultCamera(camera_.get());
 
@@ -84,6 +88,8 @@ void GameScene::Initialize() {
 	//モデルの設定
 	ground_->SetModel("Ground");
 
+	line_ = std::make_unique<DebugLine>();
+
 	/// === SEの生成 === ///
 
 	soundObject_ = Audio::GetInstance()->CreateSoundObject(soundData_, false);
@@ -106,6 +112,8 @@ void GameScene::Update() {
 	ball_->Update();
 
 	ground_->Update();
+
+	line_->Update();
 
 	//ImGuiを起動
 	ImGui::Begin("Scene");
@@ -167,7 +175,11 @@ void GameScene::Draw() {
 
 	ball_->Draw();
 
-	ground_->Draw();
+	//ground_->Draw();
+
+	DebugObjectCommon::GetInstance()->CommonDrawSetting();
+
+	line_->Draw();
 
 	/// === 前景Spriteの描画 === ///
 

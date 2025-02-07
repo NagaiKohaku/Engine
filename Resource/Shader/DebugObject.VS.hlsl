@@ -1,27 +1,27 @@
 #include "DebugObject.hlsli"
 
+//入力
+struct VertexShaderInput
+{
+    //ピクセル座標 : RTV0
+    float4 position : POSITION0;
+};
+
 //座標行列
 struct TransformationMatrix
 {
     float4x4 WVP;
-    float4x4 World;
 };
 
-//座標行列
+//座標行列 : CBV0
 ConstantBuffer<TransformationMatrix> gTransformationMatrix : register(b0);
-
-//入力
-struct VertexShaderInput
-{
-    float4 position : POSITION0;
-};
 
 VertexShaderOutput main(VertexShaderInput input)
 {
-    //出力
+    //出力データ
     VertexShaderOutput output;
 
-    //座標
+    //出力データにワールド座標を設定
     output.position = mul(input.position, gTransformationMatrix.WVP);
 
     return output;

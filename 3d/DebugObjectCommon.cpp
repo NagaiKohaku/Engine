@@ -13,10 +13,10 @@ DebugObjectCommon* DebugObjectCommon::GetInstance() {
 
 void DebugObjectCommon::Initialize() {
 
-	//DirectXŠî’ê‚ÌƒCƒ“ƒXƒ^ƒ“ƒX‚ğæ“¾
+	//DirectXåŸºåº•ã®ã‚¤ãƒ³ã‚¹ã‚¿ãƒ³ã‚¹ã‚’å–å¾—
 	dxCommon_ = DirectXCommon::GetInstance();
 
-	//ƒOƒ‰ƒtƒBƒbƒNƒpƒCƒvƒ‰ƒCƒ“‚Ì¶¬
+	//ã‚°ãƒ©ãƒ•ã‚£ãƒƒã‚¯ãƒ‘ã‚¤ãƒ—ãƒ©ã‚¤ãƒ³ã®ç”Ÿæˆ
 	CreateGraphicsPipeline();
 
 }
@@ -27,14 +27,14 @@ void DebugObjectCommon::Update() {
 
 void DebugObjectCommon::CommonDrawSetting() {
 
-	//ƒ‹[ƒgƒVƒOƒlƒ`ƒƒ‚ğİ’è
+	//ãƒ«ãƒ¼ãƒˆã‚·ã‚°ãƒãƒãƒ£ã‚’è¨­å®š
 	dxCommon_->GetCommandList()->SetGraphicsRootSignature(rootSignature_.Get());
 
-	//ƒOƒ‰ƒtƒBƒbƒNƒpƒCƒvƒ‰ƒCƒ“‚ğİ’è
+	//ã‚°ãƒ©ãƒ•ã‚£ãƒƒã‚¯ãƒ‘ã‚¤ãƒ—ãƒ©ã‚¤ãƒ³ã‚’è¨­å®š
 	dxCommon_->GetCommandList()->SetPipelineState(graphicsPipelineState_.Get());
 
-	//ƒvƒŠƒ~ƒeƒBƒuƒgƒ|ƒƒW[‚ğİ’è
-	dxCommon_->GetCommandList()->IASetPrimitiveTopology(D3D_PRIMITIVE_TOPOLOGY_TRIANGLELIST);
+	//ãƒ—ãƒªãƒŸãƒ†ã‚£ãƒ–ãƒˆãƒãƒ­ã‚¸ãƒ¼ã‚’è¨­å®š
+	dxCommon_->GetCommandList()->IASetPrimitiveTopology(D3D_PRIMITIVE_TOPOLOGY_LINELIST);
 
 }
 
@@ -42,47 +42,47 @@ void DebugObjectCommon::CreateRootSignature() {
 
 	HRESULT hr;
 
-	//ƒ‹[ƒgƒVƒOƒlƒ`ƒƒ
+	//ãƒ«ãƒ¼ãƒˆã‚·ã‚°ãƒãƒãƒ£
 	D3D12_ROOT_SIGNATURE_DESC descriptionRootSignature{};
 
 	descriptionRootSignature.Flags =
 		D3D12_ROOT_SIGNATURE_FLAG_ALLOW_INPUT_ASSEMBLER_INPUT_LAYOUT;
 
 	D3D12_DESCRIPTOR_RANGE descriptorRange[1] = {};
-	descriptorRange[0].BaseShaderRegister = 0; //0‚©‚çn‚Ü‚é
-	descriptorRange[0].NumDescriptors = 1; //”‚Í1‚Â
-	descriptorRange[0].RangeType = D3D12_DESCRIPTOR_RANGE_TYPE_SRV; //SRV‚ğg‚¤
-	descriptorRange[0].OffsetInDescriptorsFromTableStart = D3D12_DESCRIPTOR_RANGE_OFFSET_APPEND; //Offset‚ğ©“®ŒvZ
+	descriptorRange[0].BaseShaderRegister = 0; //0ã‹ã‚‰å§‹ã¾ã‚‹
+	descriptorRange[0].NumDescriptors = 1; //æ•°ã¯1ã¤
+	descriptorRange[0].RangeType = D3D12_DESCRIPTOR_RANGE_TYPE_SRV; //SRVã‚’ä½¿ã†
+	descriptorRange[0].OffsetInDescriptorsFromTableStart = D3D12_DESCRIPTOR_RANGE_OFFSET_APPEND; //Offsetã‚’è‡ªå‹•è¨ˆç®—
 
-	//RootParameter‚ğì¬
+	//RootParameterã‚’ä½œæˆ
 	D3D12_ROOT_PARAMETER rootParameters[2] = {};
 
-	//ƒ}ƒeƒŠƒAƒ‹
-	rootParameters[0].ParameterType = D3D12_ROOT_PARAMETER_TYPE_CBV;                   //CBV‚ğg‚¤
-	rootParameters[0].ShaderVisibility = D3D12_SHADER_VISIBILITY_PIXEL;                //PixelShader‚ğg‚¤
-	rootParameters[0].Descriptor.ShaderRegister = 0;                                   //ƒŒƒWƒXƒ^”Ô†0‚ÆƒoƒCƒ“ƒh
+	//ãƒãƒ†ãƒªã‚¢ãƒ«
+	rootParameters[0].ParameterType = D3D12_ROOT_PARAMETER_TYPE_CBV;                   //CBVã‚’ä½¿ã†
+	rootParameters[0].ShaderVisibility = D3D12_SHADER_VISIBILITY_PIXEL;                //PixelShaderã‚’ä½¿ã†
+	rootParameters[0].Descriptor.ShaderRegister = 0;                                   //ãƒ¬ã‚¸ã‚¹ã‚¿ç•ªå·0ã¨ãƒã‚¤ãƒ³ãƒ‰
 
 	//WVP
-	rootParameters[1].ParameterType = D3D12_ROOT_PARAMETER_TYPE_CBV;                   //CBV‚ğg‚¤
-	rootParameters[1].ShaderVisibility = D3D12_SHADER_VISIBILITY_VERTEX;               //VertexShader‚ğg‚¤
-	rootParameters[1].Descriptor.ShaderRegister = 0;                                   //ƒŒƒWƒXƒ^”Ô†0‚ÆƒoƒCƒ“ƒh
+	rootParameters[1].ParameterType = D3D12_ROOT_PARAMETER_TYPE_CBV;                   //CBVã‚’ä½¿ã†
+	rootParameters[1].ShaderVisibility = D3D12_SHADER_VISIBILITY_VERTEX;               //VertexShaderã‚’ä½¿ã†
+	rootParameters[1].Descriptor.ShaderRegister = 0;                                   //ãƒ¬ã‚¸ã‚¹ã‚¿ç•ªå·0ã¨ãƒã‚¤ãƒ³ãƒ‰
 
-	descriptionRootSignature.pParameters = rootParameters;               //ƒ‹[ƒgƒpƒ‰ƒ[ƒ^”z—ñ‚Ö‚Ìƒ|ƒCƒ“ƒ^
-	descriptionRootSignature.NumParameters = _countof(rootParameters);   //”z—ñ‚Ì’·‚³
+	descriptionRootSignature.pParameters = rootParameters;               //ãƒ«ãƒ¼ãƒˆãƒ‘ãƒ©ãƒ¡ãƒ¼ã‚¿é…åˆ—ã¸ã®ãƒã‚¤ãƒ³ã‚¿
+	descriptionRootSignature.NumParameters = _countof(rootParameters);   //é…åˆ—ã®é•·ã•
 
 	D3D12_STATIC_SAMPLER_DESC staticSamplers[1] = {};
-	staticSamplers[0].Filter = D3D12_FILTER_MIN_MAG_MIP_LINEAR;         //ƒoƒCƒŠƒjƒAƒtƒBƒ‹ƒ^
-	staticSamplers[0].AddressU = D3D12_TEXTURE_ADDRESS_MODE_WRAP;       //0~1‚Ì”ÍˆÍŠO‚ğƒŠƒs[ƒg
+	staticSamplers[0].Filter = D3D12_FILTER_MIN_MAG_MIP_LINEAR;         //ãƒã‚¤ãƒªãƒ‹ã‚¢ãƒ•ã‚£ãƒ«ã‚¿
+	staticSamplers[0].AddressU = D3D12_TEXTURE_ADDRESS_MODE_WRAP;       //0~1ã®ç¯„å›²å¤–ã‚’ãƒªãƒ”ãƒ¼ãƒˆ
 	staticSamplers[0].AddressV = D3D12_TEXTURE_ADDRESS_MODE_WRAP;
 	staticSamplers[0].AddressW = D3D12_TEXTURE_ADDRESS_MODE_WRAP;
-	staticSamplers[0].ComparisonFunc = D3D12_COMPARISON_FUNC_NEVER;     //”äŠr‚µ‚È‚¢
-	staticSamplers[0].MaxLOD = D3D12_FLOAT32_MAX;                       //‚ ‚è‚Á‚½‚¯‚ÌMinMap‚ğg‚¤
-	staticSamplers[0].ShaderRegister = 0;                               //ƒŒƒWƒXƒ^”Ô†0‚ğg‚¤
-	staticSamplers[0].ShaderVisibility = D3D12_SHADER_VISIBILITY_PIXEL; //PixelShader‚Åg‚¤
+	staticSamplers[0].ComparisonFunc = D3D12_COMPARISON_FUNC_NEVER;     //æ¯”è¼ƒã—ãªã„
+	staticSamplers[0].MaxLOD = D3D12_FLOAT32_MAX;                       //ã‚ã‚Šã£ãŸã‘ã®MinMapã‚’ä½¿ã†
+	staticSamplers[0].ShaderRegister = 0;                               //ãƒ¬ã‚¸ã‚¹ã‚¿ç•ªå·0ã‚’ä½¿ã†
+	staticSamplers[0].ShaderVisibility = D3D12_SHADER_VISIBILITY_PIXEL; //PixelShaderã§ä½¿ã†
 	descriptionRootSignature.pStaticSamplers = staticSamplers;
 	descriptionRootSignature.NumStaticSamplers = _countof(staticSamplers);
 
-	//ƒVƒŠƒAƒ‰ƒCƒY‚µ‚ÄƒoƒCƒiƒŠ‚É‚·‚é
+	//ã‚·ãƒªã‚¢ãƒ©ã‚¤ã‚ºã—ã¦ãƒã‚¤ãƒŠãƒªã«ã™ã‚‹
 	Microsoft::WRL::ComPtr<ID3DBlob> signatureBlob = nullptr;
 
 	Microsoft::WRL::ComPtr<ID3DBlob> errorBlob = nullptr;
@@ -90,7 +90,7 @@ void DebugObjectCommon::CreateRootSignature() {
 	hr = D3D12SerializeRootSignature(&descriptionRootSignature,
 		D3D_ROOT_SIGNATURE_VERSION_1, &signatureBlob, &errorBlob);
 
-	//ƒGƒ‰[‚ªo‚½‚ç~‚ß‚é
+	//ã‚¨ãƒ©ãƒ¼ãŒå‡ºãŸã‚‰æ­¢ã‚ã‚‹
 	if (FAILED(hr)) {
 
 		OutPutLog(reinterpret_cast<char*>(errorBlob->GetBufferPointer()));
@@ -108,30 +108,30 @@ void DebugObjectCommon::CreateGraphicsPipeline() {
 
 	HRESULT hr;
 
-	/// === RootSignature‚ğİ’è‚·‚é === ///
+	/// === RootSignatureã‚’è¨­å®šã™ã‚‹ === ///
 
 	CreateRootSignature();
 
-	/// === InputLayout‚ğİ’è‚·‚é === ///
+	/// === InputLayoutã‚’è¨­å®šã™ã‚‹ === ///
 
-	//InputLayOut‚ğİ’è‚·‚é
+	//InputLayOutã‚’è¨­å®šã™ã‚‹
 	D3D12_INPUT_ELEMENT_DESC inputElementDescs[1] = {};
 	inputElementDescs[0].SemanticName = "POSITION";
 	inputElementDescs[0].SemanticIndex = 0;
 	inputElementDescs[0].Format = DXGI_FORMAT_R32G32B32A32_FLOAT;
 	inputElementDescs[0].AlignedByteOffset = D3D12_APPEND_ALIGNED_ELEMENT;
 
-	//InputLayout‚ğŠm’è‚·‚é
+	//InputLayoutã‚’ç¢ºå®šã™ã‚‹
 	D3D12_INPUT_LAYOUT_DESC inputLayoutDesc{};
 	inputLayoutDesc.pInputElementDescs = inputElementDescs;
 	inputLayoutDesc.NumElements = _countof(inputElementDescs);
 
-	/// === BlendState‚ğİ’è‚·‚é === ///
+	/// === BlendStateã‚’è¨­å®šã™ã‚‹ === ///
 
-	//BlendState‚Ìİ’è
+	//BlendStateã®è¨­å®š
 	D3D12_BLEND_DESC blendDesc{};
 
-	//Normal‚ÌƒuƒŒƒ“ƒhƒ‚[ƒh‚Åİ’è
+	//Normalã®ãƒ–ãƒ¬ãƒ³ãƒ‰ãƒ¢ãƒ¼ãƒ‰ã§è¨­å®š
 	blendDesc.RenderTarget[0].RenderTargetWriteMask = D3D12_COLOR_WRITE_ENABLE_ALL;
 	blendDesc.RenderTarget[0].BlendEnable = TRUE;
 	blendDesc.RenderTarget[0].SrcBlend = D3D12_BLEND_SRC_ALPHA;
@@ -141,20 +141,20 @@ void DebugObjectCommon::CreateGraphicsPipeline() {
 	blendDesc.RenderTarget[0].BlendOpAlpha = D3D12_BLEND_OP_ADD;
 	blendDesc.RenderTarget[0].DestBlendAlpha = D3D12_BLEND_ZERO;
 
-	/// === RasterizerState‚ğİ’è‚·‚é === ///
+	/// === RasterizerStateã‚’è¨­å®šã™ã‚‹ === ///
 
-	//RasterizerState‚Ìİ’è
+	//RasterizerStateã®è¨­å®š
 	D3D12_RASTERIZER_DESC rasterizerDesc{};
 
-	//— –Ê(Œv‰ñ‚è)‚ğ•\¦‚µ‚È‚¢
+	//è£é¢(æ™‚è¨ˆå›ã‚Š)ã‚’è¡¨ç¤ºã—ãªã„
 	rasterizerDesc.CullMode = D3D12_CULL_MODE_BACK;
 
-	//OŠpŒ`‚Ì’†‚ğ“h‚è‚Â‚Ô‚·
+	//ä¸‰è§’å½¢ã®ä¸­ã‚’å¡—ã‚Šã¤ã¶ã™
 	rasterizerDesc.FillMode = D3D12_FILL_MODE_SOLID;
 
-	/// === Shader‚ÌƒRƒ“ƒpƒCƒ‹ === ///
+	/// === Shaderã®ã‚³ãƒ³ãƒ‘ã‚¤ãƒ« === ///
 
-	//VertexShader‚ğƒRƒ“ƒpƒCƒ‹‚·‚é
+	//VertexShaderã‚’ã‚³ãƒ³ãƒ‘ã‚¤ãƒ«ã™ã‚‹
 	Microsoft::WRL::ComPtr<IDxcBlob> vertexShaderBlob =
 		dxCommon_->CompileShader(
 			L"Resource/Shader/DebugObject.VS.hlsl",
@@ -163,7 +163,7 @@ void DebugObjectCommon::CreateGraphicsPipeline() {
 
 	assert(vertexShaderBlob != nullptr);
 
-	//PixelShader‚ğƒRƒ“ƒpƒCƒ‹‚·‚é
+	//PixelShaderã‚’ã‚³ãƒ³ãƒ‘ã‚¤ãƒ«ã™ã‚‹
 	Microsoft::WRL::ComPtr<IDxcBlob> pixelShaderBlob =
 		dxCommon_->CompileShader(
 			L"Resource/Shader/DebugObject.PS.hlsl",
@@ -172,20 +172,20 @@ void DebugObjectCommon::CreateGraphicsPipeline() {
 
 	assert(pixelShaderBlob != nullptr);
 
-	/// === DepthStencilState‚Ìİ’è === ///
+	/// === DepthStencilStateã®è¨­å®š === ///
 
-	//DepthStencilState‚Ìİ’è
+	//DepthStencilStateã®è¨­å®š
 	D3D12_DEPTH_STENCIL_DESC depthStencilDesc{};
-	//Depth‚Ì‹@”\‚ğ—LŒø‰»‚·‚é
+	//Depthã®æ©Ÿèƒ½ã‚’æœ‰åŠ¹åŒ–ã™ã‚‹
 	depthStencilDesc.DepthEnable = true;
-	//‘‚«‚İ‚µ‚Ü‚·
+	//æ›¸ãè¾¼ã¿ã—ã¾ã™
 	depthStencilDesc.DepthWriteMask = D3D12_DEPTH_WRITE_MASK_ALL;
-	//”äŠrŠÖ”‚ÍLessEqualB‚Â‚Ü‚èA‹ß‚¯‚ê‚Î•`‰æ‚³‚ê‚é
+	//æ¯”è¼ƒé–¢æ•°ã¯LessEqualã€‚ã¤ã¾ã‚Šã€è¿‘ã‘ã‚Œã°æç”»ã•ã‚Œã‚‹
 	depthStencilDesc.DepthFunc = D3D12_COMPARISON_FUNC_LESS_EQUAL;
 
-	/// === PSO‚ğ¶¬‚·‚é === ///
+	/// === PSOã‚’ç”Ÿæˆã™ã‚‹ === ///
 
-	//PSO‚Ìİ’è
+	//PSOã®è¨­å®š
 	D3D12_GRAPHICS_PIPELINE_STATE_DESC graphicsPipelineStateDesc{};
 
 	//RootSignature
@@ -202,7 +202,7 @@ void DebugObjectCommon::CreateGraphicsPipeline() {
 	graphicsPipelineStateDesc.PS = { pixelShaderBlob->GetBufferPointer(),
 	pixelShaderBlob->GetBufferSize() };
 
-	//DepthStencil‚Ìİ’è
+	//DepthStencilã®è¨­å®š
 	graphicsPipelineStateDesc.DepthStencilState = depthStencilDesc;
 	graphicsPipelineStateDesc.DSVFormat = DXGI_FORMAT_D24_UNORM_S8_UINT;
 
@@ -212,24 +212,24 @@ void DebugObjectCommon::CreateGraphicsPipeline() {
 	//RasterizerState
 	graphicsPipelineStateDesc.RasterizerState = rasterizerDesc;
 
-	//‘‚«‚ŞRTV‚Ìî•ñ
+	//æ›¸ãè¾¼ã‚€RTVã®æƒ…å ±
 	graphicsPipelineStateDesc.NumRenderTargets = 1;
 
 	graphicsPipelineStateDesc.RTVFormats[0] = DXGI_FORMAT_R8G8B8A8_UNORM_SRGB;
 
-	//—˜—p‚·‚éƒgƒ|ƒƒW(Œ`ó)‚Ìƒ^ƒCƒvBOŠpŒ`
+	//åˆ©ç”¨ã™ã‚‹ãƒˆãƒãƒ­ã‚¸(å½¢çŠ¶)ã®ã‚¿ã‚¤ãƒ—ã€‚ä¸‰è§’å½¢
 	graphicsPipelineStateDesc.PrimitiveTopologyType =
 		D3D12_PRIMITIVE_TOPOLOGY_TYPE_TRIANGLE;
 
-	//‚Ç‚Ì‚æ‚¤‚É‰æ–Ê‚ÉF‚ğ‘Å‚¿‚Ş‚©‚Ìİ’è
+	//ã©ã®ã‚ˆã†ã«ç”»é¢ã«è‰²ã‚’æ‰“ã¡è¾¼ã‚€ã‹ã®è¨­å®š
 	graphicsPipelineStateDesc.SampleDesc.Count = 1;
 
 	graphicsPipelineStateDesc.SampleMask = D3D12_DEFAULT_SAMPLE_MASK;
 
-	//PSO‚ğ¶¬
+	//PSOã‚’ç”Ÿæˆ
 	hr = dxCommon_->GetDevice()->CreateGraphicsPipelineState(&graphicsPipelineStateDesc,
 		IID_PPV_ARGS(&graphicsPipelineState_));
 
-	//³í‚É¶¬‚Å‚«‚Ä‚¢‚é‚©‚ÌŠm”F
+	//æ­£å¸¸ã«ç”Ÿæˆã§ãã¦ã„ã‚‹ã‹ã®ç¢ºèª
 	assert(SUCCEEDED(hr));
 }

@@ -4,6 +4,7 @@
 #include "Camera.h"
 #include "Object3D.h"
 #include "Object2D.h"
+#include "DebugLine.h"
 #include "Audio.h"
 
 #include "memory"
@@ -48,6 +49,9 @@ private:
 
 	//地面
 	std::unique_ptr<Object3D> ground_;
+
+	//ライン
+	std::unique_ptr<DebugLine> line_;
 
 	//SE
 	SoundObject soundObject_;

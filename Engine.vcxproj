@@ -116,8 +116,8 @@ copy "$(WindowsSdkDir)bin\$(TargetPlatformVersion)\x64\dxil.dll" "$(TargetDir)dx
     <ClCompile Include="Base\WinApp.cpp" />
     <ClCompile Include="3d\DirectionalLight.cpp" />
     <ClCompile Include="3d\Line.cpp" />
-    <ClCompile Include="DebugLine.cpp" />
-    <ClCompile Include="DebugObjectCommon.cpp" />
+    <ClCompile Include="3d\DebugLine.cpp" />
+    <ClCompile Include="3d\DebugObjectCommon.cpp" />
     <ClCompile Include="main.cpp" />
     <ClCompile Include="Math\Easing.cpp" />
     <ClCompile Include="Math\MakeMatrixMath.cpp" />
@@ -156,8 +156,8 @@ copy "$(WindowsSdkDir)bin\$(TargetPlatformVersion)\x64\dxil.dll" "$(TargetDir)dx
     <ClInclude Include="Base\WinApp.h" />
     <ClInclude Include="3d\DirectionalLight.h" />
     <ClInclude Include="3d\Line.h" />
-    <ClInclude Include="DebugLine.h" />
-    <ClInclude Include="DebugObjectCommon.h" />
+    <ClInclude Include="3d\DebugLine.h" />
+    <ClInclude Include="3d\DebugObjectCommon.h" />
     <ClInclude Include="Math\AABB.h" />
     <ClInclude Include="Math\Easing.h" />
     <ClInclude Include="Math\MakeMatrixMath.h" />
