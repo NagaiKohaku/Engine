@@ -32,6 +32,13 @@ public:
 	DebugLine();
 
 	/// <summary>
+	/// 初期化処理
+	/// </summary>
+	/// <param name="direction">ラインの方向</param>
+	/// <param name="color">ラインの色</param>
+	void Initialize(Vector3 direction,Vector4 color);
+
+	/// <summary>
 	/// 更新処理
 	/// </summary>
 	void Update();
@@ -40,6 +47,29 @@ public:
 	/// 描画処理
 	/// </summary>
 	void Draw();
+
+	/// <summary>
+	/// 親オブジェクトのセット
+	/// </summary>
+	void SetParent(WorldTransform* parent);
+
+	/// <summary>
+	/// 大きさのセット
+	/// </summary>
+	/// <param name="scale">大きさ</param>
+	void SetScale(Vector3 scale);
+
+	/// <summary>
+	/// 回転角の設置
+	/// </summary>
+	/// <param name="rotate">回転角</param>
+	void SetRotate(Vector3 rotate);
+
+	/// <summary>
+	/// 色のセット
+	/// </summary>
+	/// <param name="color">色</param>
+	void SetColor(Vector4 color);
 
 	///-------------------------------------------/// 
 	/// メンバ構造体

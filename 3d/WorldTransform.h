@@ -66,7 +66,7 @@ public:
 	/// 親オブジェクトのセッター
 	/// </summary>
 	/// <param name="parent"></param>
-	void SetParent(const WorldTransform* parent);
+	void SetParent(WorldTransform* parent);
 
 public:
 

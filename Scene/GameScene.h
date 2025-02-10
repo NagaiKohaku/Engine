@@ -50,9 +50,6 @@ private:
 	//地面
 	std::unique_ptr<Object3D> ground_;
 
-	//ライン
-	std::unique_ptr<DebugLine> line_;
-
 	//SE
 	SoundObject soundObject_;
 

@@ -10,12 +10,15 @@
 #include "string"
 #include "vector"
 #include "wrl.h"
+#include "memory"
 
 class Object3DCommon;
 
 class Model;
 
 class Camera;
+
+class DebugLine;
 
 ///=====================================================/// 
 /// 3Dオブジェクト
@@ -41,6 +44,11 @@ public:
 	/// 描画処理
 	/// </summary>
 	void Draw();
+
+	/// <summary>
+	/// デバッグの描画処理
+	/// </summary>
+	void DebugDraw();
 
 	/// <summary>
 	/// ImGuiの表示
@@ -110,4 +118,6 @@ private:
 
 	//モデル情報
 	Model* model_;
+
+	std::vector<std::unique_ptr<DebugLine>> debugLines_;
 };

@@ -44,36 +44,21 @@ void WorldTransform::DisplayImGui() {
 
 const Vector3& WorldTransform::GetForward() const {
 
-	Matrix4x4 rotateMat =
-		(MakeRotateXMatrix(rotate_.x) *
-			MakeRotateYMatrix(rotate_.y)) *
-		MakeRotateZMatrix(rotate_.z);
-
-	Vector3 result = { rotateMat.m[2][0],rotateMat.m[2][1],rotateMat.m[2][2] };
+	Vector3 result = { worldMatrix_.m[2][0],worldMatrix_.m[2][1],worldMatrix_.m[2][2] };
 
 	return result;
 }
 
 const Vector3& WorldTransform::GetUp() const {
 
-	Matrix4x4 rotateMat =
-		(MakeRotateXMatrix(rotate_.x) *
-			MakeRotateYMatrix(rotate_.y)) *
-		MakeRotateZMatrix(rotate_.z);
-
-	Vector3 result = { rotateMat.m[1][0],rotateMat.m[1][1],rotateMat.m[1][2] };
+	Vector3 result = { worldMatrix_.m[1][0],worldMatrix_.m[1][1],worldMatrix_.m[1][2] };
 
 	return result;
 }
 
 const Vector3& WorldTransform::GetRight() const {
 
-	Matrix4x4 rotateMat =
-		(MakeRotateXMatrix(rotate_.x) *
-			MakeRotateYMatrix(rotate_.y)) *
-		MakeRotateZMatrix(rotate_.z);
-
-	Vector3 result = { rotateMat.m[0][0],rotateMat.m[0][1],rotateMat.m[0][2] };
+	Vector3 result = { worldMatrix_.m[0][0],worldMatrix_.m[0][1],worldMatrix_.m[0][2] };
 
 	return result;
 }
@@ -89,9 +74,7 @@ const Vector3& WorldTransform::GetWorldTranslate() const {
 	return result;
 }
 
-void WorldTransform::SetParent(const WorldTransform* parent) {
+void WorldTransform::SetParent(WorldTransform* parent) {
 
-	this->Initialize();
-
-	this->parent_ = parent_;
+	this->parent_ = parent;
 }
