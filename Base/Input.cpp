@@ -259,5 +259,5 @@ Vector2 Input::GetMousePos() {
 Vector3 Input::GetMouseVelocity() {
 
 	//マウスの移動量を返す
-	return Vector3(static_cast<float>(mouseState_.lX), static_cast<float>(mouseState_.lY),static_cast<float>(mouseState_.lZ));
+	return Vector3(static_cast<float>(mouseState_.lX), static_cast<float>(mouseState_.lY), static_cast<float>(mouseState_.lZ));
 }

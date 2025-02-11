@@ -37,12 +37,18 @@ void GameScene::Initialize() {
 	//モデルのロード
 	ModelManager::GetInstance()->LoadModel("Ground", "terrain");
 
+	SpriteManager::GetInstance()->LoadSprite("BackGround", "backGround");
+
 	//音声データの読み込み
 	soundData_ = Audio::GetInstance()->SoundLoad("Resource/Sound/SE/se.wav");
 
 	/// === オブジェクトの生成 === ///
 
-	/// === タイトルの生成 === ///
+	/// === 背景の生成 === ///
+
+	backGround_ = std::make_unique<Object2D>();
+
+	backGround_->SetSprite("BackGround");
 
 	/// === 箱の生成 === ///
 
@@ -101,6 +107,8 @@ void GameScene::Update() {
 	//カメラをデバッグ状態で更新
 	camera_->Update();
 
+	backGround_->Update();
+
 	//3Dオブジェクトの更新
 	cube_->Update();
 
@@ -150,16 +158,15 @@ void GameScene::Update() {
 
 void GameScene::Draw() {
 
-	//Object3Dの描画
+	//背景の描画 : 背景レイヤー
+	backGround_->Draw(BackGround);
+
+	//箱の描画 : オブジェクトレイヤー
 	cube_->Draw(Object);
 
+	//球の描画 : オブジェクトレイヤー
 	ball_->Draw(Object);
 
+	//地面の描画 : オブジェクトレイヤー
 	ground_->Draw(Object);
-
-	cube_->DebugDraw();
-
-	ball_->DebugDraw();
-
-	ground_->DebugDraw();
 }

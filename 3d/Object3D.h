@@ -121,5 +121,8 @@ private:
 	//モデル情報
 	Model* model_;
 
-	std::vector<std::unique_ptr<DebugLine>> debugLines_;
+	//軸方向ライン
+	std::vector<std::unique_ptr<DebugLine>> axisLines_;
+
+	bool isDebug_;
 };

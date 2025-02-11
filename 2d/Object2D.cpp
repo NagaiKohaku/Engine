@@ -4,6 +4,7 @@
 #include "Object2DCommon.h"
 #include "Sprite.h"
 #include "SpriteManager.h"
+#include "Renderer.h"
 
 #include "imgui.h"
 
@@ -75,18 +76,25 @@ void Object2D::Update() {
 ///=====================================================/// 
 /// 描画
 ///=====================================================///
-void Object2D::Draw() {
+void Object2D::Draw(LayerType layer) {
 
-	//2Dオブジェクトの描画前処理
-	Object2DCommon::GetInstance()->CommonDrawSetting();
+	std::function<void()> func;
 
-	//座標変換行列データの設定
-	object2DCommon_->GetDxCommon()->GetCommandList()->SetGraphicsRootConstantBufferView(1, WVPResource_.Get()->GetGPUVirtualAddress());
+	func = [this]() {
 
-	//スプライトが割り当てられていれば描画する
-	if (sprite_) {
-		sprite_->Draw();
-	}
+		//2Dオブジェクトの描画前処理
+		Object2DCommon::GetInstance()->CommonDrawSetting();
+
+		//座標変換行列データの設定
+		object2DCommon_->GetDxCommon()->GetCommandList()->SetGraphicsRootConstantBufferView(1, WVPResource_.Get()->GetGPUVirtualAddress());
+
+		//スプライトが割り当てられていれば描画する
+		if (sprite_) {
+			sprite_->Draw();
+		}
+		};
+
+	Renderer::GetInstance()->AddDraw(layer, func);
 }
 
 ///=====================================================/// 
@@ -120,4 +128,6 @@ void Object2D::SetSprite(const std::string& spriteName) {
 
 	//引数のスプライト名からスプライトを探す
 	sprite_ = SpriteManager::GetInstance()->FindSprite(spriteName);
+
+	size_ = sprite_->GetSize();
 }

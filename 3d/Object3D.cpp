@@ -41,24 +41,27 @@ Object3D::Object3D() {
 	//今持っているカメラをデフォルトカメラに設定
 	camera_ = object3DCommon_->GetDefaultCamera();
 
-	/// ===  === ///
+	/// === 軸方向ラインの初期化 === ///
 
-	debugLines_.resize(3);
+	//3方向分のサイズを確保
+	axisLines_.resize(3);
 
-	debugLines_[0] = std::make_unique<DebugLine>();
-	debugLines_[0]->Initialize(transform_.GetRight(), { 1.0f,0.0f,0.0f,1.0f });
-	debugLines_[0]->SetScale({ 1.5f,1.5f,1.5f });
-	debugLines_[0]->SetParent(&transform_);
+	//X軸ラインの初期化
+	axisLines_[0] = std::make_unique<DebugLine>();
+	axisLines_[0]->Initialize(transform_.GetRight(), { 1.0f,0.0f,0.0f,1.0f });
+	axisLines_[0]->SetParent(&transform_);
 
-	debugLines_[1] = std::make_unique<DebugLine>();
-	debugLines_[1]->Initialize(transform_.GetUp(), { 0.0f,1.0f,0.0f,1.0f });
-	debugLines_[1]->SetScale({ 1.5f,1.5f,1.5f });
-	debugLines_[1]->SetParent(&transform_);
+	//Y軸ラインの初期化
+	axisLines_[1] = std::make_unique<DebugLine>();
+	axisLines_[1]->Initialize(transform_.GetUp(), { 0.0f,1.0f,0.0f,1.0f });
+	axisLines_[1]->SetParent(&transform_);
 
-	debugLines_[2] = std::make_unique<DebugLine>();
-	debugLines_[2]->Initialize(transform_.GetForward(), { 0.0f,0.0f,1.0f,1.0f });
-	debugLines_[2]->SetScale({ 1.5f,1.5f,1.5f });
-	debugLines_[2]->SetParent(&transform_);
+	//Z軸ラインの初期化
+	axisLines_[2] = std::make_unique<DebugLine>();
+	axisLines_[2]->Initialize(transform_.GetForward(), { 0.0f,0.0f,1.0f,1.0f });
+	axisLines_[2]->SetParent(&transform_);
+
+	isDebug_ = true;
 }
 
 ///=====================================================/// 
@@ -87,7 +90,7 @@ void Object3D::Update() {
 	WVPData_->World = transform_.GetWorldMatrix();
 	WVPData_->WorldInverseTranspose = Inverse4x4(transform_.GetWorldMatrix());
 
-	for (auto& line : debugLines_) {
+	for (auto& line : axisLines_) {
 		line->Update();
 	}
 }
@@ -97,9 +100,10 @@ void Object3D::Update() {
 ///=====================================================///
 void Object3D::Draw(LayerType layer) {
 
-	std::function<void()> func;
+	//Renderクラスに渡す
+	std::function<void()> command;
 
-	func = [this]() {
+	command = [this]() {
 
 		//3Dオブジェクトの描画前処理
 		object3DCommon_->CommonDrawSetting();
@@ -113,13 +117,25 @@ void Object3D::Draw(LayerType layer) {
 		}
 		};
 
-	Renderer::GetInstance()->AddDraw(layer, func);
+	Renderer::GetInstance()->AddDraw(layer, command);
 
+	if (isDebug_) {
+
+		command = [this]() {
+
+			for (auto& line : axisLines_) {
+				line->Draw();
+			}
+			};
+
+		Renderer::GetInstance()->AddDraw(Debug, command);
+
+	}
 }
 
 void Object3D::DebugDraw() {
 
-	for (auto& line : debugLines_) {
+	for (auto& line : axisLines_) {
 		line->Draw();
 	}
 }
@@ -140,16 +156,6 @@ void Object3D::DisplayImGui() {
 
 	model_->SetColor(color);
 	model_->SetShininess(shininess);
-
-	//if (ImGui::Button("Forward")) {
-	//	debugLineX_->SetRotate(transform_.GetForward());
-	//}
-	//if (ImGui::Button("Up")) {
-	//	debugLineX_->SetRotate(transform_.GetUp());
-	//}
-	//if (ImGui::Button("Rigth")) {
-	//	debugLineX_->SetRotate(transform_.GetRight());
-	//}
 }
 
 ///=====================================================/// 

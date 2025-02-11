@@ -41,6 +41,8 @@ private:
 	//音声データ
 	SoundData soundData_;
 
+	std::unique_ptr<Object2D> backGround_;
+
 	//箱
 	std::unique_ptr<Object3D> cube_;
 
