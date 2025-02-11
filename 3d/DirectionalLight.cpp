@@ -57,9 +57,11 @@ void DirectionalLight::DisplayImGui() {
 
 	ImGui::ColorEdit4("Color", &lightData_->color.x);
 
-	ImGui::DragFloat3("Direction", &lightData_->direction.x, 0.01f, -1.0f, 1.0f);
+	ImGui::DragFloat3("Direction", &lightData_->direction.x, 0.01f);
 
 	ImGui::DragFloat("Intensity", &lightData_->intensity, 0.01f);
+
+
 
 	ImGui::End();
 }

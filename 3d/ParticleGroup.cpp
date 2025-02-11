@@ -136,7 +136,7 @@ void ParticleGroup::Update() {
 
 	//ビルボード行列の計算
 	Matrix4x4 backToFrontMatrix = MakeRotateYMatrix(std::numbers::pi_v<float>);
-	Matrix4x4 billboardMatrix = Multiply(backToFrontMatrix, defaultCamera_->GetWorldMatrix());
+	Matrix4x4 billboardMatrix = backToFrontMatrix * defaultCamera_->GetWorldTransform().GetWorldMatrix();
 
 	billboardMatrix.m[3][0] = 0.0f;
 	billboardMatrix.m[3][1] = 0.0f;
@@ -170,10 +170,10 @@ void ParticleGroup::Update() {
 			Matrix4x4 translateMatrix = MakeTranslateMatrix(particleIterator->transform.translate);
 
 			//ワールド行列の計算
-			Matrix4x4 worldMatrix = Multiply(scaleMatrix, Multiply(billboardMatrix, translateMatrix));
+			Matrix4x4 worldMatrix = scaleMatrix * (billboardMatrix * translateMatrix);
 
 			//ワールドビュープロジェクション行列の合成
-			Matrix4x4 worldViewProjectionMatrix = Multiply(worldMatrix, viewProjectionMatrix);
+			Matrix4x4 worldViewProjectionMatrix = worldMatrix * viewProjectionMatrix;
 
 			//インスタンシングデータに書き込む
 			instancingData_[numInstance_].WVP = worldViewProjectionMatrix;

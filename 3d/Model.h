@@ -31,20 +31,6 @@ public:
 	void Initialize(const std::string& directoryPath, const std::string& filename);
 
 	/// <summary>
-	/// 球体の初期化処理
-	/// </summary>
-	/// <param name="directoryPath">ディレクトリパス</param>
-	/// <param name="filename">ファイル名</param>
-	void InitializeSphere(const std::string& directoryPath, const std::string& filename);
-
-	/// <summary>
-	/// 立方体の初期化処理
-	/// </summary>
-	/// <param name="directoryPath">ディレクトリパス</param>
-	/// <param name="filename">ファイル名</param>
-	void InitializeCube(const std::string& directoryPath, const std::string& filename);
-
-	/// <summary>
 	/// 描画処理
 	/// </summary>
 	void Draw();
@@ -85,9 +71,9 @@ private:
 
 	//頂点データ
 	struct VertexData {
-		Vector4 position;
-		Vector2 texcoord;
-		Vector3 normal;
+		Vector4  position;
+		Vector2  texcoord;
+		Vector3  normal;
 	};
 
 	//マテリアル
@@ -110,6 +96,7 @@ private:
 	struct ModelData {
 
 		std::vector<VertexData> vertices;
+		std::vector<uint32_t> indexes;
 		MaterialData material;
 	};
 
@@ -127,13 +114,16 @@ private:
 	//バッファリソース
 	Microsoft::WRL::ComPtr<ID3D12Resource> vertexResource_ = nullptr;
 	Microsoft::WRL::ComPtr<ID3D12Resource> materialResource_ = nullptr;
+	Microsoft::WRL::ComPtr<ID3D12Resource> indexResource_ = nullptr;
 
 	//バッファリソース内のデータを指すポインタ
 	VertexData* vertexData_ = nullptr;
 	Material* materialData_ = nullptr;
+	uint32_t* indexData_ = nullptr;
 
 	//バッファリソースの使い道を補足するバッファビュー
 	D3D12_VERTEX_BUFFER_VIEW vertexBufferView_;
+	D3D12_INDEX_BUFFER_VIEW indexBufferView_;
 
 	///-------------------------------------------/// 
 	/// クラス内処理関数
@@ -141,22 +131,12 @@ private:
 private:
 
 	/// <summary>
-	/// 球体モデルの生成
-	/// </summary>
-	void CreateSphereModel();
-
-	/// <summary>
-	/// 立方体モデルの生成
-	/// </summary>
-	void CreateCubeModel();
-
-	/// <summary>
 	/// objファイルの読み込み
 	/// </summary>
 	/// <param name="directoryPath">ディレクトリパス</param>
 	/// <param name="filename">ファイル名</param>
 	/// <returns>モデルデータ</returns>
-	ModelData LoadObjFile(const std::string& directoryPath, const std::string& filename);
+	void LoadObjFile(const std::string& directoryPath, const std::string& filename);
 
 	/// <summary>
 	/// マテリアルデータの読み込み

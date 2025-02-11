@@ -3,6 +3,8 @@
 #include "DirectXCommon.h"
 #include "Object3DCommon.h"
 #include "Object2DCommon.h"
+#include "DebugObjectCommon.h"
+
 #include "ModelManager.h"
 #include "SpriteManager.h"
 #include "ParticleManager.h"
@@ -18,29 +20,21 @@ void GameScene::Initialize() {
 	//カメラを生成
 	camera_ = std::make_unique<Camera>();
 
-	//カメラの座標
-	camera_->SetDebugTranslate({ 0.0f,3.0f,0.0f });
-
-	//カメラの角度
-	camera_->SetDebugRotate({ 0.0f,0.0f,0.0f });
-
 	camera_->SetDebugCameraFlag(true);
+
+	//カメラの座標
+	camera_->GetWorldTransform().translate_ = { 0.0f,3.0f,0.0f };
 
 	//デフォルトカメラを設定
 	Object3DCommon::GetInstance()->SetDefaultCamera(camera_.get());
+
+	DebugObjectCommon::GetInstance()->SetDefaultCamera(camera_.get());
 
 	ParticleManager::GetInstance()->SetDefaultCamera(camera_.get());
 
 	/// === リソースの読み込み === ///
 
-	//スプライトのロード
-	SpriteManager::GetInstance()->LoadSprite("Title", "RockShotTitle");
-
 	//モデルのロード
-	ModelManager::GetInstance()->CreateCube("MonsterCube", "monsterBall");
-
-	ModelManager::GetInstance()->CreateSphere("MonsterBall", "monsterBall");
-
 	ModelManager::GetInstance()->LoadModel("Ground", "terrain");
 
 	//音声データの読み込み
@@ -56,10 +50,13 @@ void GameScene::Initialize() {
 	cube_ = std::make_unique<Object3D>();
 
 	//座標の設定
-	cube_->SetTranslate({ 0.0f,1.0f,0.0f });
+	cube_->GetWorldTransform().translate_ = { 0.0f,1.0f,0.0f };
 
 	//モデルの設定
-	cube_->SetModel("MonsterCube");
+	cube_->SetModel("Cube");
+
+	//モデルの色を指定
+	cube_->GetModel()->SetColor({ 0.5f,0.0f,0.0f,1.0f });
 
 	/// === 球の生成 === ///
 
@@ -67,13 +64,18 @@ void GameScene::Initialize() {
 	ball_ = std::make_unique<Object3D>();
 
 	//座標の設定
-	ball_->SetTranslate({ 0.0f,3.0f,0.0f });
+	ball_->GetWorldTransform().translate_ = { 0.0f,3.0f,0.0f };
 
 	//角度の設定
-	ball_->SetRotate({ 0.0f,static_cast<float>(std::numbers::pi) / 180.0f * -90.0f,0.0f });
+	ball_->GetWorldTransform().rotate_ = { 0.0f,static_cast<float>(std::numbers::pi) / 180.0f * -90.0f,0.0f };
 
 	//モデルの設定
-	ball_->SetModel("MonsterBall");
+	ball_->SetModel("Sphere");
+
+	//モデルの色の指定
+	ball_->GetModel()->SetColor({ 0.5f,0.f,0.0f,1.0f });
+
+	camera_->SetTrackingObject(ball_.get());
 
 	/// === 地面の生成 === ///
 
@@ -81,7 +83,7 @@ void GameScene::Initialize() {
 	ground_ = std::make_unique<Object3D>();
 
 	//角度の設定
-	ground_->SetRotate({ 0.0f,static_cast<float>(std::numbers::pi) / 180.0f * -90.0f,0.0f });
+	ground_->GetWorldTransform().rotate_ = { 0.0f,static_cast<float>(std::numbers::pi) / 180.0f * -90.0f,0.0f };
 
 	//モデルの設定
 	ground_->SetModel("Ground");
@@ -89,10 +91,6 @@ void GameScene::Initialize() {
 	/// === SEの生成 === ///
 
 	soundObject_ = Audio::GetInstance()->CreateSoundObject(soundData_, false);
-
-	ParticleManager::GetInstance()->CreateParticleGroup("Particle", "star.png");
-
-	ParticleManager::GetInstance()->SetAcceleration("Particle", Vector3(0.0f, 5.0f, 0.0f), AABB({ -1.0f,-1.0f,-1.0f }, { 1.0f,1.0f,1.0f }));
 }
 
 void GameScene::Finalize() {
@@ -112,18 +110,6 @@ void GameScene::Update() {
 	ball_->Update();
 
 	ground_->Update();
-
-	ParticleManager::GetInstance()->Emit(
-		"Particle",
-		Vector3(0.0f, 0.0f, 0.0f),
-		AABB({ -1.0f,0.0f,-1.0f }, { 1.0f,0.0f,1.0f }),
-		Vector3(-1.0f, -2.0f, -1.0f),
-		Vector3(1.0f, -1.0f, 1.0f),
-		1.0f,
-		3.0f,
-		true,
-		2
-	);
 
 	//ImGuiを起動
 	ImGui::Begin("Scene");
@@ -185,7 +171,11 @@ void GameScene::Draw() {
 
 	ball_->Draw();
 
-	ground_->Draw();
+	//ground_->Draw();
+
+	DebugObjectCommon::GetInstance()->CommonDrawSetting();
+
+	ball_->DebugDraw();
 
 	/// === 前景Spriteの描画 === ///
 

@@ -2,6 +2,8 @@
 #include "Vector3.h"
 #include "Matrix4x4.h"
 
+#include "WorldTransform.h"
+
 class Object3D;
 
 ///=====================================================/// 
@@ -46,30 +48,6 @@ public:
 public:
 
 	/// <summary>
-	/// 角度のセッター
-	/// </summary>
-	/// <param name="rotate">角度</param>
-	void SetRotate(const Vector3& rotate) { transform_.rotate = rotate; }
-
-	/// <summary>
-	/// 座標のセッター
-	/// </summary>
-	/// <param name="translate">座標</param>
-	void SetTranslate(const Vector3& translate) { transform_.translate = translate; }
-
-	/// <summary>
-	/// デバッグカメラの角度のセッター
-	/// </summary>
-	/// <param name="rotate">角度</param>
-	void SetDebugRotate(const Vector3& rotate) { debugCameraTransform_.rotate = rotate; }
-
-	/// <summary>
-	/// デバッグカメラの座標のセッター
-	/// </summary>
-	/// <param name="translate">座標</param>
-	void SetDebugTranslate(const Vector3& translate) { debugCameraTransform_.translate = translate; }
-
-	/// <summary>
 	/// fovYのセッター
 	/// </summary>
 	/// <param name="fovY">fovY</param>
@@ -100,28 +78,10 @@ public:
 	void SetDebugCameraFlag(const bool flag) { isDebugCamera_ = flag; }
 
 	/// <summary>
-	/// 角度のゲッター
+	/// ワールドトランスフォームのゲッター
 	/// </summary>
-	/// <returns>角度</returns>
-	const Vector3& GetRotate() const { return transform_.rotate; }
-
-	/// <summary>
-	/// 座標のゲッター
-	/// </summary>
-	/// <returns>座標</returns>
-	const Vector3& GetTranslate() const { return transform_.translate; }
-
-	/// <summary>
-	/// ワールド座標のゲッター
-	/// </summary>
-	/// <returns>ワールド座標</returns>
-	const Vector3& GetWorldTranslate() const { return { worldMatrix_.m[3][0],worldMatrix_.m[3][1],worldMatrix_.m[3][2] }; }
-
-	/// <summary>
-	/// ワールド行列のゲッター
-	/// </summary>
-	/// <returns>ワールド行列</returns>
-	const Matrix4x4& GetWorldMatrix() const { return worldMatrix_; }
+	/// <returns>ワールドトランスフォーム</returns>
+	WorldTransform& GetWorldTransform() { return isDebugCamera_ ? debugTransform_ : transform_; }
 
 	/// <summary>
 	/// ビュー行列のゲッター
@@ -146,13 +106,6 @@ public:
 	///-------------------------------------------///
 private:
 
-	//座標変換データ
-	struct Transform {
-		Vector3 scale;
-		Vector3 rotate;
-		Vector3 translate;
-	};
-
 	///-------------------------------------------/// 
 	/// メンバ変数
 	///-------------------------------------------///
@@ -162,13 +115,10 @@ private:
 	Object3D* object_;
 
 	//座標
-	Transform transform_;
+	WorldTransform transform_;
 
 	//デバッグカメラの座標
-	Transform debugCameraTransform_;
-
-	//ワールド行列
-	Matrix4x4 worldMatrix_;
+	WorldTransform debugTransform_;
 
 	//ビュー行列
 	Matrix4x4 viewMatrix_;

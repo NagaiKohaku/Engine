@@ -4,6 +4,7 @@
 #include "Camera.h"
 #include "Object3D.h"
 #include "Object2D.h"
+#include "DebugLine.h"
 #include "Audio.h"
 
 #include "memory"

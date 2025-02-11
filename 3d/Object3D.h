@@ -2,6 +2,7 @@
 #include "Vector3.h"
 #include "Vector4.h"
 #include "Matrix4x4.h"
+#include "WorldTransform.h"
 
 #include "DirectXTex.h"
 #include "d3d12.h"
@@ -9,12 +10,15 @@
 #include "string"
 #include "vector"
 #include "wrl.h"
+#include "memory"
 
 class Object3DCommon;
 
 class Model;
 
 class Camera;
+
+class DebugLine;
 
 ///=====================================================/// 
 /// 3Dオブジェクト
@@ -42,6 +46,11 @@ public:
 	void Draw();
 
 	/// <summary>
+	/// デバッグの描画処理
+	/// </summary>
+	void DebugDraw();
+
+	/// <summary>
 	/// ImGuiの表示
 	/// </summary>
 	void DisplayImGui();
@@ -52,10 +61,16 @@ public:
 public:
 
 	/// <summary>
-	/// モデルのセッター
+	/// ワールドトランスフォームのゲッター
 	/// </summary>
-	/// <param name="modelName">ファイル名</param>
-	void SetModel(const std::string& modelName);
+	/// <returns>ワールドトランスフォーム</returns>
+	WorldTransform& GetWorldTransform() { return transform_; }
+
+	/// <summary>
+	/// モデルのゲッター
+	/// </summary>
+	/// <returns>モデル</returns>
+	Model* GetModel() const { return model_;}
 
 	/// <summary>
 	/// カメラのセッター
@@ -64,46 +79,10 @@ public:
 	void SetCamera(Camera* camera) { camera_ = camera; }
 
 	/// <summary>
-	/// 大きさのセッター
+	/// モデルのセッター
 	/// </summary>
-	/// <param name="scale">大きさ</param>
-	void SetScale(const Vector3& scale) { transform_.scale = scale; }
-
-	/// <summary>
-	/// 角度のセッター
-	/// </summary>
-	/// <param name="rotate">角度</param>
-	void SetRotate(const Vector3& rotate) { transform_.rotate = rotate; }
-
-	/// <summary>
-	/// 座標のセッター
-	/// </summary>
-	/// <param name="translate">座標</param>
-	void SetTranslate(const Vector3& translate) { transform_.translate = translate; }
-
-	/// <summary>
-	/// 大きさのゲッター
-	/// </summary>
-	/// <returns>大きさ</returns>
-	Vector3 GetScale() const { return transform_.scale; }
-
-	/// <summary>
-	/// 角度のゲッター
-	/// </summary>
-	/// <returns>角度</returns>
-	Vector3 GetRotate() const { return transform_.rotate; }
-
-	/// <summary>
-	/// 座標のゲッター
-	/// </summary>
-	/// <returns>座標</returns>
-	Vector3 GetTranslate() const { return transform_.translate; }
-
-	/// <summary>
-	/// モデルのゲッター
-	/// </summary>
-	/// <returns>モデル</returns>
-	Model* GetModel() const { return model_;}
+	/// <param name="modelName">ファイル名</param>
+	void SetModel(const std::string& modelName);
 
 	///-------------------------------------------/// 
 	/// メンバ構造体
@@ -117,13 +96,6 @@ private:
 		Matrix4x4 WorldInverseTranspose;
 	};
 
-	//座標変換データ
-	struct Transform {
-		Vector3 scale;
-		Vector3 rotate;
-		Vector3 translate;
-	};
-
 	///-------------------------------------------/// 
 	/// メンバ変数
 	///-------------------------------------------///
@@ -135,15 +107,17 @@ private:
 	//カメラ
 	Camera* camera_;
 
+	//座標データ
+	WorldTransform transform_;
+
 	//バッファリソース
 	Microsoft::WRL::ComPtr<ID3D12Resource> WVPResource_ = nullptr;
 
 	//バッファリソース内のデータを指すポインタ
 	TransformationMatrix* WVPData_ = nullptr;
 
-	//座標データ
-	Transform transform_;
-
 	//モデル情報
 	Model* model_;
+
+	std::vector<std::unique_ptr<DebugLine>> debugLines_;
 };

@@ -4,11 +4,12 @@
 #include "SpriteCommon.h"
 #include "Object3DCommon.h"
 #include "Object2DCommon.h"
+#include "DebugObjectCommon.h"
 #include "ModelCommon.h"
 #include "TextureManager.h"
 #include "ModelManager.h"
 #include "ParticleCommon.h"
-#include "ParticleManager.h";
+#include "ParticleManager.h"
 #include "Input.h"
 #include "Audio.h"
 #include "ImGuiManager.h"
@@ -45,13 +46,19 @@ int WINAPI WinMain(HINSTANCE, HINSTANCE, LPSTR, int) {
 	Object3DCommon* object3DCommon = Object3DCommon::GetInstance();
 	object3DCommon->Initialize();
 
+	//2Dオブジェクト基底
 	Object2DCommon* object2dCommon = Object2DCommon::GetInstance();
 	object2dCommon->Initialize();
+
+	//デバッグオブジェクト基底
+	DebugObjectCommon* debugObjectCommon = DebugObjectCommon::GetInstance();
+	debugObjectCommon->Initialize();
 
 	//モデル基底
 	ModelCommon* modelCommon = ModelCommon::GetInstance();
 	modelCommon->Initialize();
 
+	//パーティクル基底
 	ParticleCommon* particleCommon = ParticleCommon::GetInstance();
 	particleCommon->Initialize();
 

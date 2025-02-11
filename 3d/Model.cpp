@@ -18,13 +18,12 @@ void Model::Initialize(const std::string& directoryPath, const std::string& file
 	modelCommon_ = ModelCommon::GetInstance();
 
 	//モデルデータの読み込み
-	modelData_ = LoadObjFile(directoryPath, filename);
+	LoadObjFile(directoryPath, filename);
+
+	/// === 頂点リソース === ///
 
 	//頂点リソースを作成
 	vertexResource_ = modelCommon_->GetDxCommon()->CreateBufferResource(sizeof(VertexData) * modelData_.vertices.size());
-
-	//マテリアルリソースを作成
-	materialResource_ = modelCommon_->GetDxCommon()->CreateBufferResource(sizeof(Material));
 
 	//リソースの先頭のアドレスを取得する
 	vertexBufferView_.BufferLocation = vertexResource_->GetGPUVirtualAddress();
@@ -37,105 +36,43 @@ void Model::Initialize(const std::string& directoryPath, const std::string& file
 
 	//書き込むためのアドレスを取得する
 	vertexResource_->Map(0, nullptr, reinterpret_cast<void**>(&vertexData_));
-	materialResource_->Map(0, nullptr, reinterpret_cast<void**>(&materialData_));
 
 	//頂点データの設定
 	std::memcpy(vertexData_, modelData_.vertices.data(), sizeof(VertexData) * modelData_.vertices.size());
 
-	//マテリアルデータの設定
-	materialData_->color = Vector4(1.0f, 1.0f, 1.0f, 1.0f);
-	materialData_->enableLighting = true;
-	materialData_->uvTransform = MakeIdentity4x4();
-	materialData_->shininess = 50.0f;
+	/// === インデックスリソース === ///
 
-	//マテリアルの読み込み
-	TextureManager::GetInstance()->LoadTexture(modelData_.material.textureFilePath);
-}
+	//インデックスリソースを作成
+	indexResource_ = modelCommon_->GetDxCommon()->CreateBufferResource(sizeof(uint32_t) * modelData_.vertices.size());
 
-///=====================================================/// 
-/// 球体モデルの初期化処理
-///=====================================================///
-void Model::InitializeSphere(const std::string& directoryPath, const std::string& filename) {
+	//リソースの先頭アドレスを取得
+	indexBufferView_.BufferLocation = indexResource_->GetGPUVirtualAddress();
 
-	//モデル基底のインスタンスを取得
-	modelCommon_ = ModelCommon::GetInstance();
+	//使用するリソースのサイズを設定
+	indexBufferView_.SizeInBytes = UINT(sizeof(uint32_t) * modelData_.vertices.size());
 
-	//球体モデルの生成
-	CreateSphereModel();
+	//フォーマットを設定
+	indexBufferView_.Format = DXGI_FORMAT_R32_UINT;
 
-	//頂点リソースを作成
-	vertexResource_ = modelCommon_->GetDxCommon()->CreateBufferResource(sizeof(VertexData) * modelData_.vertices.size());
+	//書き込むためのアドレスを取得する
+	indexResource_->Map(0, nullptr, reinterpret_cast<void**>(&indexData_));
+
+	//インデックスデータの設定
+	std::memcpy(indexData_, modelData_.indexes.data(), sizeof(uint32_t) * modelData_.indexes.size());
+
+	/// === マテリアルリソース === ///
 
 	//マテリアルリソースを作成
 	materialResource_ = modelCommon_->GetDxCommon()->CreateBufferResource(sizeof(Material));
 
-	//リソースの先頭のアドレスを取得する
-	vertexBufferView_.BufferLocation = vertexResource_->GetGPUVirtualAddress();
-
-	//使用するリソースのサイズを設定
-	vertexBufferView_.SizeInBytes = UINT(sizeof(VertexData) * modelData_.vertices.size());
-
-	//1頂点当たりのサイズを設定
-	vertexBufferView_.StrideInBytes = sizeof(VertexData);
-
 	//書き込むためのアドレスを取得する
-	vertexResource_->Map(0, nullptr, reinterpret_cast<void**>(&vertexData_));
 	materialResource_->Map(0, nullptr, reinterpret_cast<void**>(&materialData_));
-
-	//頂点データの設定
-	std::memcpy(vertexData_, modelData_.vertices.data(), sizeof(VertexData) * modelData_.vertices.size());
 
 	//マテリアルデータの設定
 	materialData_->color = Vector4(1.0f, 1.0f, 1.0f, 1.0f);
 	materialData_->enableLighting = true;
 	materialData_->uvTransform = MakeIdentity4x4();
 	materialData_->shininess = 50.0f;
-
-	//マテリアルのファイルパスを設定
-	modelData_.material.textureFilePath = directoryPath + filename;
-
-	//マテリアルの読み込み
-	TextureManager::GetInstance()->LoadTexture(modelData_.material.textureFilePath);
-}
-
-void Model::InitializeCube(const std::string& directoryPath, const std::string& filename) {
-
-	//モデル基底のインスタンスを取得
-	modelCommon_ = ModelCommon::GetInstance();
-
-	//立方体モデルの生成
-	CreateCubeModel();
-
-	//頂点リソースを作成
-	vertexResource_ = modelCommon_->GetDxCommon()->CreateBufferResource(sizeof(VertexData) * modelData_.vertices.size());
-
-	//マテリアルリソースを作成
-	materialResource_ = modelCommon_->GetDxCommon()->CreateBufferResource(sizeof(Material));
-
-	//リソースの先頭のアドレスを取得する
-	vertexBufferView_.BufferLocation = vertexResource_->GetGPUVirtualAddress();
-
-	//使用するリソースのサイズを設定
-	vertexBufferView_.SizeInBytes = UINT(sizeof(VertexData) * modelData_.vertices.size());
-
-	//1頂点当たりのサイズを設定
-	vertexBufferView_.StrideInBytes = sizeof(VertexData);
-
-	//書き込むためのアドレスを取得する
-	vertexResource_->Map(0, nullptr, reinterpret_cast<void**>(&vertexData_));
-	materialResource_->Map(0, nullptr, reinterpret_cast<void**>(&materialData_));
-
-	//頂点データの設定
-	std::memcpy(vertexData_, modelData_.vertices.data(), sizeof(VertexData) * modelData_.vertices.size());
-
-	//マテリアルデータの設定
-	materialData_->color = Vector4(1.0f, 1.0f, 1.0f, 1.0f);
-	materialData_->enableLighting = true;
-	materialData_->uvTransform = MakeIdentity4x4();
-	materialData_->shininess = 50.0f;
-
-	//マテリアルのファイルパスを設定
-	modelData_.material.textureFilePath = directoryPath + "/" + filename;
 
 	//マテリアルの読み込み
 	TextureManager::GetInstance()->LoadTexture(modelData_.material.textureFilePath);
@@ -149,6 +86,9 @@ void Model::Draw() {
 	//頂点データの設定
 	modelCommon_->GetDxCommon()->GetCommandList()->IASetVertexBuffers(0, 1, &vertexBufferView_);
 
+	//頂点番号の設定
+	modelCommon_->GetDxCommon()->GetCommandList()->IASetIndexBuffer(&indexBufferView_);
+
 	//マテリアルデータの設定
 	modelCommon_->GetDxCommon()->GetCommandList()->SetGraphicsRootConstantBufferView(0, materialResource_.Get()->GetGPUVirtualAddress());
 
@@ -156,214 +96,20 @@ void Model::Draw() {
 	modelCommon_->GetDxCommon()->GetCommandList()->SetGraphicsRootDescriptorTable(2, TextureManager::GetInstance()->GetSrvHandleGPU(modelData_.material.textureFilePath));
 
 	//描画コマンド発行
-	modelCommon_->GetDxCommon()->GetCommandList()->DrawInstanced(UINT(modelData_.vertices.size()), 1, 0, 0);
+	modelCommon_->GetDxCommon()->GetCommandList()->DrawIndexedInstanced(UINT(modelData_.indexes.size()), 1, 0, 0, 0);
 
-}
-
-///=====================================================/// 
-/// 球体モデルの生成
-///=====================================================///
-void Model::CreateSphereModel() {
-
-	//分割数
-	const uint32_t kSubDivision = 16;
-
-	//経度1つ分の角度 φ
-	const float kLonEvery = static_cast<float>(std::numbers::pi) * 2.0f / float(kSubDivision);
-
-	//緯度の1つ分の角度 θ
-	const float kLatEvery = static_cast<float>(std::numbers::pi) / float(kSubDivision);
-
-	//緯度の方向に分割
-	for (uint32_t latIndex = 0; latIndex < kSubDivision; ++latIndex) {
-
-		float lat = -static_cast<float>(std::numbers::pi) / 2.0f + kLatEvery * latIndex; //θ
-
-		//緯度の方向に分割しながら線を描く
-		for (uint32_t lonIndex = 0; lonIndex < kSubDivision; ++lonIndex) {
-
-			float lon = lonIndex * kLonEvery; //φ
-			uint32_t start = (latIndex * kSubDivision + lonIndex) * 6;
-
-			VertexData vertexData[6];
-
-			//基準点a 左下
-			vertexData[0].position.x = cosf(lat) * cosf(lon);
-			vertexData[0].position.y = sinf(lat);
-			vertexData[0].position.z = cosf(lat) * sinf(lon);
-			vertexData[0].position.w = 1.0f;
-			vertexData[0].texcoord = {
-				float(lonIndex) / float(kSubDivision),
-				1.0f - float(latIndex) / float(kSubDivision)
-			};
-			vertexData[0].normal.x = vertexData[0].position.x;
-			vertexData[0].normal.y = vertexData[0].position.y;
-			vertexData[0].normal.z = vertexData[0].position.z;
-
-			//基準点b 左上
-			vertexData[1].position.x = cosf(lat + kLatEvery) * cosf(lon);
-			vertexData[1].position.y = sinf(lat + kLatEvery);
-			vertexData[1].position.z = cosf(lat + kLatEvery) * sinf(lon);
-			vertexData[1].position.w = 1.0f;
-			vertexData[1].texcoord = {
-				float(lonIndex) / float(kSubDivision),
-				1.0f - float(latIndex + 1) / float(kSubDivision)
-			};
-			vertexData[1].normal.x = vertexData[1].position.x;
-			vertexData[1].normal.y = vertexData[1].position.y;
-			vertexData[1].normal.z = vertexData[1].position.z;
-
-			//基準点c 右下
-			vertexData[2].position.x = cosf(lat) * cosf(lon + kLonEvery);
-			vertexData[2].position.y = sinf(lat);
-			vertexData[2].position.z = cosf(lat) * sinf(lon + kLonEvery);
-			vertexData[2].position.w = 1.0f;
-			vertexData[2].texcoord = {
-				float(lonIndex + 1) / float(kSubDivision),
-				1.0f - float(latIndex) / float(kSubDivision)
-			};
-			vertexData[2].normal.x = vertexData[2].position.x;
-			vertexData[2].normal.y = vertexData[2].position.y;
-			vertexData[2].normal.z = vertexData[2].position.z;
-
-			//基準点b 左上
-			vertexData[3].position.x = cosf(lat + kLatEvery) * cosf(lon);
-			vertexData[3].position.y = sinf(lat + kLatEvery);
-			vertexData[3].position.z = cosf(lat + kLatEvery) * sinf(lon);
-			vertexData[3].position.w = 1.0f;
-			vertexData[3].texcoord = {
-				float(lonIndex) / float(kSubDivision),
-				1.0f - float(latIndex + 1) / float(kSubDivision)
-			};
-			vertexData[3].normal.x = vertexData[3].position.x;
-			vertexData[3].normal.y = vertexData[3].position.y;
-			vertexData[3].normal.z = vertexData[3].position.z;
-
-			//基準点d 右上
-			vertexData[4].position.x = cosf(lat + kLatEvery) * cosf(lon + kLonEvery);
-			vertexData[4].position.y = sinf(lat + kLatEvery);
-			vertexData[4].position.z = cosf(lat + kLatEvery) * sinf(lon + kLonEvery);
-			vertexData[4].position.w = 1.0f;
-			vertexData[4].texcoord = {
-				float(lonIndex + 1) / float(kSubDivision),
-				1.0f - float(latIndex + 1) / float(kSubDivision)
-			};
-			vertexData[4].normal.x = vertexData[4].position.x;
-			vertexData[4].normal.y = vertexData[4].position.y;
-			vertexData[4].normal.z = vertexData[4].position.z;
-
-			//基準点c 右下
-			vertexData[5].position.x = cosf(lat) * cosf(lon + kLonEvery);
-			vertexData[5].position.y = sinf(lat);
-			vertexData[5].position.z = cosf(lat) * sinf(lon + kLonEvery);
-			vertexData[5].position.w = 1.0f;
-			vertexData[5].texcoord = {
-				float(lonIndex + 1) / float(kSubDivision),
-				1.0f - float(latIndex) / float(kSubDivision)
-			};
-			vertexData[5].normal.x = vertexData[5].position.x;
-			vertexData[5].normal.y = vertexData[5].position.y;
-			vertexData[5].normal.z = vertexData[5].position.z;
-
-			modelData_.vertices.push_back(vertexData[0]);
-			modelData_.vertices.push_back(vertexData[1]);
-			modelData_.vertices.push_back(vertexData[2]);
-			modelData_.vertices.push_back(vertexData[3]);
-			modelData_.vertices.push_back(vertexData[4]);
-			modelData_.vertices.push_back(vertexData[5]);
-		}
-	}
-
-}
-
-void Model::CreateCubeModel() {
-
-	// 頂点番号
-	enum VertexIndex {
-		LeftBottomFront,  //左下前
-		LeftTopFront,     //左上前
-		RightBottomFront, //右下前
-		RightTopFront,    //右上前
-		LeftBottomBack,   //左下後
-		LeftTopBack,      //左上後
-		RightBottomBack,  //右下後
-		RightTopBack      //右上後
-	};
-
-	// 頂点座標の定義
-	Vector4 vertices[8] = {
-		{-1.0f,-1.0f,-1.0f,1.0f}, // 左下前
-		{-1.0f, 1.0f,-1.0f,1.0f}, // 左上前
-		{ 1.0f,-1.0f,-1.0f,1.0f}, // 右下前
-		{ 1.0f, 1.0f,-1.0f,1.0f}, // 右上前
-		{-1.0f,-1.0f, 1.0f,1.0f}, // 左下後
-		{-1.0f, 1.0f, 1.0f,1.0f}, // 左上後
-		{ 1.0f,-1.0f, 1.0f,1.0f}, // 右下後
-		{ 1.0f, 1.0f, 1.0f,1.0f}, // 右上後
-	};
-
-	// 各面の三角形を定義 (三角形を2つずつ使って面を形成)
-	uint32_t indices[36] = {
-		LeftBottomFront, LeftTopFront, RightBottomFront,  LeftTopFront, RightTopFront, RightBottomFront,      // 前面
-		RightBottomBack, RightTopBack, LeftBottomBack,  RightTopBack, LeftTopBack, LeftBottomBack,            // 背面
-		LeftBottomBack, LeftTopBack, LeftBottomFront,  LeftTopBack, LeftTopFront, LeftBottomFront,            // 左面
-		RightBottomFront, RightTopFront, RightBottomBack,  RightTopFront, RightTopBack, RightBottomBack,      // 右面
-		LeftTopFront, LeftTopBack, RightTopFront,  LeftTopBack, RightTopBack, RightTopFront,                  // 上面
-		RightBottomFront, RightBottomBack, LeftBottomFront,  RightBottomBack, LeftBottomBack, LeftBottomFront // 底面
-	};
-
-	// テクスチャ座標 (各頂点に対応)
-	Vector2 texcoords[6] = {
-		{0.0f, 1.0f}, // 左下
-		{0.0f, 0.0f}, // 左上
-		{1.0f, 1.0f}, // 右下
-		{0.0f, 0.0f}, // 左上
-		{1.0f, 0.0f}, // 右上
-		{1.0f, 1.0f}, // 右下
-	};
-
-	// 各三角形の頂点データを追加
-	for (int i = 0; i < 36; i += 6) {
-
-		VertexData vertex[6];
-
-		for (int j = 0; j < 6; ++j) {
-
-			int index = indices[i + j];
-
-			vertex[j].position = vertices[index];
-
-			vertex[j].texcoord = texcoords[j % 6];
-
-			vertex[j].normal = {
-				vertex[j].position.x,
-				vertex[j].position.y,
-				vertex[j].position.z
-			};
-		}
-
-		modelData_.vertices.push_back(vertex[0]);
-		modelData_.vertices.push_back(vertex[1]);
-		modelData_.vertices.push_back(vertex[2]);
-		modelData_.vertices.push_back(vertex[3]);
-		modelData_.vertices.push_back(vertex[4]);
-		modelData_.vertices.push_back(vertex[5]);
-	}
 }
 
 ///=====================================================/// 
 /// objファイルの読み込み
 ///=====================================================///
-Model::ModelData Model::LoadObjFile(const std::string& directoryPath, const std::string& filename) {
+void Model::LoadObjFile(const std::string& directoryPath, const std::string& filename) {
 
 	///-------------------------------------------/// 
 	/// ローカル変数
 	///-------------------------------------------///
 
-	//構築するModelData
-	ModelData modelData;
-
-	//頂点データ
+	//三角面の頂点データ
 	VertexData triangle[3];
 
 	//位置
@@ -483,13 +229,15 @@ Model::ModelData Model::LoadObjFile(const std::string& directoryPath, const std:
 				Vector3 normal = normals[elementIndices[2] - 1];
 
 				//三角形の構築
-				triangle[faceVertex] = { position,texCoord,normal };
+				triangle[faceVertex] = {position,texCoord,normal};
 			}
 
-			//頂点データを登録
-			modelData.vertices.push_back(triangle[2]);
-			modelData.vertices.push_back(triangle[1]);
-			modelData.vertices.push_back(triangle[0]);
+			//頂点データの設定
+			for (int i = 2; i >= 0; i--) {
+
+				modelData_.indexes.push_back(uint32_t(modelData_.vertices.size()));
+				modelData_.vertices.push_back(triangle[i]);
+			}
 
 		} else if (identifier == "mtllib") {
 
@@ -501,11 +249,9 @@ Model::ModelData Model::LoadObjFile(const std::string& directoryPath, const std:
 			s >> materialFilename;
 
 			//マテリアルデータを読み込む
-			modelData.material = LoadMaterialTemplateFile(directoryPath, materialFilename);
+			modelData_.material = LoadMaterialTemplateFile(directoryPath, materialFilename);
 		}
 	}
-
-	return modelData;
 }
 
 ///=====================================================/// 
