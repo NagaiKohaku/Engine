@@ -14,6 +14,7 @@
 #include "Audio.h"
 #include "ImGuiManager.h"
 #include "SceneManager.h"
+#include "Renderer.h"
 
 //Windowsアプリでのエントリーポイント(main関数)
 int WINAPI WinMain(HINSTANCE, HINSTANCE, LPSTR, int) {
@@ -78,6 +79,10 @@ int WINAPI WinMain(HINSTANCE, HINSTANCE, LPSTR, int) {
 	SceneManager* sceneManager = SceneManager::GetInstance();
 	sceneManager->Initialize();
 
+	//レンダラー
+	Renderer* renderer = Renderer::GetInstance();
+	renderer->Initialize();
+
 	//テクスチャマネージャー
 	TextureManager::GetInstance()->Initialize();
 
@@ -132,6 +137,9 @@ int WINAPI WinMain(HINSTANCE, HINSTANCE, LPSTR, int) {
 
 		//シーンの描画
 		sceneManager->Draw();
+
+		//レンダラーの描画
+		renderer->Draw();
 
 		//パーティクルの描画
 		particleManager->Draw();

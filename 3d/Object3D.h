@@ -7,9 +7,11 @@
 #include "DirectXTex.h"
 #include "d3d12.h"
 
+#include "LayerType.h"
+
+#include "wrl.h"
 #include "string"
 #include "vector"
-#include "wrl.h"
 #include "memory"
 
 class Object3DCommon;
@@ -43,7 +45,7 @@ public:
 	/// <summary>
 	/// 描画処理
 	/// </summary>
-	void Draw();
+	void Draw(LayerType layer);
 
 	/// <summary>
 	/// デバッグの描画処理

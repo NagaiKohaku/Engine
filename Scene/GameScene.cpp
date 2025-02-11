@@ -66,9 +66,6 @@ void GameScene::Initialize() {
 	//座標の設定
 	ball_->GetWorldTransform().translate_ = { 0.0f,3.0f,0.0f };
 
-	//角度の設定
-	ball_->GetWorldTransform().rotate_ = { 0.0f,static_cast<float>(std::numbers::pi) / 180.0f * -90.0f,0.0f };
-
 	//モデルの設定
 	ball_->SetModel("Sphere");
 
@@ -153,32 +150,16 @@ void GameScene::Update() {
 
 void GameScene::Draw() {
 
-	/// === 背景Spriteの描画 === ///
+	//Object3Dの描画
+	cube_->Draw(Object);
 
-	//Spriteの描画準備
-	Object2DCommon::GetInstance()->CommonDrawSetting();
+	ball_->Draw(Object);
 
-	//深度情報のリセット
-	DirectXCommon::GetInstance()->ClearDepthBuffer();
+	ground_->Draw(Object);
 
-	/// === 3DObjectの描画 === ///
-
-	//3DObjectの描画準備
-	Object3DCommon::GetInstance()->CommonDrawSetting();
-
-	////Object3Dの描画
-	cube_->Draw();
-
-	ball_->Draw();
-
-	//ground_->Draw();
-
-	DebugObjectCommon::GetInstance()->CommonDrawSetting();
+	cube_->DebugDraw();
 
 	ball_->DebugDraw();
 
-	/// === 前景Spriteの描画 === ///
-
-	Object2DCommon::GetInstance()->CommonDrawSetting();
-
+	ground_->DebugDraw();
 }

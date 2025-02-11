@@ -77,6 +77,9 @@ void Object2D::Update() {
 ///=====================================================///
 void Object2D::Draw() {
 
+	//2Dオブジェクトの描画前処理
+	Object2DCommon::GetInstance()->CommonDrawSetting();
+
 	//座標変換行列データの設定
 	object2DCommon_->GetDxCommon()->GetCommandList()->SetGraphicsRootConstantBufferView(1, WVPResource_.Get()->GetGPUVirtualAddress());
 

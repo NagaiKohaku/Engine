@@ -6,6 +6,7 @@
 #include "ModelManager.h"
 #include "Camera.h"
 #include "DebugLine.h"
+#include "Renderer.h"
 
 #include "imgui.h"
 
@@ -46,7 +47,7 @@ Object3D::Object3D() {
 
 	debugLines_[0] = std::make_unique<DebugLine>();
 	debugLines_[0]->Initialize(transform_.GetRight(), { 1.0f,0.0f,0.0f,1.0f });
-	debugLines_[0]->SetScale({1.5f,1.5f,1.5f});
+	debugLines_[0]->SetScale({ 1.5f,1.5f,1.5f });
 	debugLines_[0]->SetParent(&transform_);
 
 	debugLines_[1] = std::make_unique<DebugLine>();
@@ -94,15 +95,26 @@ void Object3D::Update() {
 ///=====================================================/// 
 /// 描画処理
 ///=====================================================///
-void Object3D::Draw() {
+void Object3D::Draw(LayerType layer) {
 
-	//座標変換行列データの設定
-	object3DCommon_->GetDxCommon()->GetCommandList()->SetGraphicsRootConstantBufferView(1, WVPResource_.Get()->GetGPUVirtualAddress());
+	std::function<void()> func;
 
-	//3Dモデルが割り当てられていれば描画する
-	if (model_) {
-		model_->Draw();
-	}
+	func = [this]() {
+
+		//3Dオブジェクトの描画前処理
+		object3DCommon_->CommonDrawSetting();
+
+		//座標変換行列データの設定
+		object3DCommon_->GetDxCommon()->GetCommandList()->SetGraphicsRootConstantBufferView(1, WVPResource_.Get()->GetGPUVirtualAddress());
+
+		//3Dモデルが割り当てられていれば描画する
+		if (model_) {
+			model_->Draw();
+		}
+		};
+
+	Renderer::GetInstance()->AddDraw(layer, func);
+
 }
 
 void Object3D::DebugDraw() {
