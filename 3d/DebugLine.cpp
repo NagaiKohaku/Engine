@@ -110,6 +110,9 @@ void DebugLine::Update() {
 
 void DebugLine::Draw() {
 
+	//デバッグオブジェクトの描画前処理
+	DebugObjectCommon::GetInstance()->CommonDrawSetting();
+
 	//頂点データをGPUに送信
 	debugCommon_->GetDxCommon()->GetCommandList()->IASetVertexBuffers(0, 1, &vertexBufferView_);
 

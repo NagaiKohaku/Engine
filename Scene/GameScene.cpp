@@ -37,12 +37,18 @@ void GameScene::Initialize() {
 	//モデルのロード
 	ModelManager::GetInstance()->LoadModel("Ground", "terrain");
 
+	SpriteManager::GetInstance()->LoadSprite("BackGround", "backGround");
+
 	//音声データの読み込み
 	soundData_ = Audio::GetInstance()->SoundLoad("Resource/Sound/SE/se.wav");
 
 	/// === オブジェクトの生成 === ///
 
-	/// === タイトルの生成 === ///
+	/// === 背景の生成 === ///
+
+	backGround_ = std::make_unique<Object2D>();
+
+	backGround_->SetSprite("BackGround");
 
 	/// === 箱の生成 === ///
 
@@ -65,9 +71,6 @@ void GameScene::Initialize() {
 
 	//座標の設定
 	ball_->GetWorldTransform().translate_ = { 0.0f,3.0f,0.0f };
-
-	//角度の設定
-	ball_->GetWorldTransform().rotate_ = { 0.0f,static_cast<float>(std::numbers::pi) / 180.0f * -90.0f,0.0f };
 
 	//モデルの設定
 	ball_->SetModel("Sphere");
@@ -103,6 +106,8 @@ void GameScene::Update() {
 
 	//カメラをデバッグ状態で更新
 	camera_->Update();
+
+	backGround_->Update();
 
 	//3Dオブジェクトの更新
 	cube_->Update();
@@ -153,32 +158,15 @@ void GameScene::Update() {
 
 void GameScene::Draw() {
 
-	/// === 背景Spriteの描画 === ///
+	//背景の描画 : 背景レイヤー
+	backGround_->Draw(BackGround);
 
-	//Spriteの描画準備
-	Object2DCommon::GetInstance()->CommonDrawSetting();
+	//箱の描画 : オブジェクトレイヤー
+	cube_->Draw(Object);
 
-	//深度情報のリセット
-	DirectXCommon::GetInstance()->ClearDepthBuffer();
+	//球の描画 : オブジェクトレイヤー
+	ball_->Draw(Object);
 
-	/// === 3DObjectの描画 === ///
-
-	//3DObjectの描画準備
-	Object3DCommon::GetInstance()->CommonDrawSetting();
-
-	////Object3Dの描画
-	cube_->Draw();
-
-	ball_->Draw();
-
-	//ground_->Draw();
-
-	DebugObjectCommon::GetInstance()->CommonDrawSetting();
-
-	ball_->DebugDraw();
-
-	/// === 前景Spriteの描画 === ///
-
-	Object2DCommon::GetInstance()->CommonDrawSetting();
-
+	//地面の描画 : オブジェクトレイヤー
+	ground_->Draw(Object);
 }

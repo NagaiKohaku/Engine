@@ -73,21 +73,19 @@ void Camera::Update() {
 		//LShiftを押していたらカメラ操作
 		if (Input::GetInstance()->isPushKey(DIK_LSHIFT)) {
 
+			//左クリックしていたらカメラ座標の移動
+			if (Input::GetInstance()->IsPushMouseButton(0)) {
+
+				velocity.x = -Input::GetInstance()->GetMouseVelocity().x * 0.01f;
+				velocity.y = Input::GetInstance()->GetMouseVelocity().y * 0.01f;
+			}
+
 			//右クリックしていたらカメラの回転
 			if (Input::GetInstance()->IsPushMouseButton(1)) {
 
 				rotateDelta.x = (static_cast<float>(std::numbers::pi) / 180.0f) * Input::GetInstance()->GetMouseVelocity().y;
 
 				rotateDelta.y = (static_cast<float>(std::numbers::pi) / 180.0f) * Input::GetInstance()->GetMouseVelocity().x;
-
-				rotateDelta.z = (static_cast<float>(std::numbers::pi) / 180.0f) * Input::GetInstance()->GetMouseVelocity().z;
-			}
-
-			//左クリックしていたらカメラ座標の移動
-			if (Input::GetInstance()->IsPushMouseButton(0)) {
-
-				velocity.x = -Input::GetInstance()->GetMouseVelocity().x * 0.01f;
-				velocity.y = Input::GetInstance()->GetMouseVelocity().y * 0.01f;
 			}
 
 			//カメラ座標Z軸の移動

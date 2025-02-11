@@ -7,9 +7,11 @@
 #include "DirectXTex.h"
 #include "d3d12.h"
 
+#include "LayerType.h"
+
+#include "wrl.h"
 #include "string"
 #include "vector"
-#include "wrl.h"
 #include "memory"
 
 class Object3DCommon;
@@ -43,7 +45,7 @@ public:
 	/// <summary>
 	/// 描画処理
 	/// </summary>
-	void Draw();
+	void Draw(LayerType layer);
 
 	/// <summary>
 	/// デバッグの描画処理
@@ -119,5 +121,8 @@ private:
 	//モデル情報
 	Model* model_;
 
-	std::vector<std::unique_ptr<DebugLine>> debugLines_;
+	//軸方向ライン
+	std::vector<std::unique_ptr<DebugLine>> axisLines_;
+
+	bool isDebug_;
 };

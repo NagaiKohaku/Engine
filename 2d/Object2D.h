@@ -6,6 +6,8 @@
 #include "DirectXTex.h"
 #include "d3d12.h"
 
+#include "LayerType.h"
+
 #include "string"
 #include "vector"
 #include "wrl.h"
@@ -37,7 +39,7 @@ public:
 	/// <summary>
 	/// 描画
 	/// </summary>
-	void Draw();
+	void Draw(LayerType layer);
 
 	/// <summary>
 	/// ImGuiの描画
