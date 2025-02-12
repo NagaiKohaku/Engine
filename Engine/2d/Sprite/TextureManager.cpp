@@ -1,6 +1,5 @@
 #include "TextureManager.h"
 
-#include "Base/DirectXCommon.h"
 #include "Base/SrvManager.h"
 
 #include "Other/Log.h"

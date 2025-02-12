@@ -1,5 +1,7 @@
 #pragma once
 
+#include "Base/DirectXCommon.h"
+
 #include "DirectXTex.h"
 #include "d3d12.h"
 #include "d3dx12.h"
@@ -10,8 +12,6 @@
 #include "wrl.h"
 
 /// === 前方宣言 === ///
-class DirectXCommon;
-
 class SrvManager;
 
 ///=====================================================/// 
