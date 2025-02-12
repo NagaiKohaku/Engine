@@ -1,16 +1,22 @@
 #pragma once
 #include "BaseScene.h"
 
-#include "Camera.h"
-#include "Object3D.h"
-#include "Object2D.h"
-#include "DebugLine.h"
-#include "Audio.h"
+#include "Base/Audio.h"
+#include "2d/Object/Object2D.h"
+#include "3d/Camera/Camera.h"
+#include "3d/Object/Object3D.h"
+#include "3d/Object/DebugLine.h"
 
 #include "memory"
 
+///=====================================================/// 
+/// ゲームシーン
+///=====================================================///
 class GameScene : public BaseScene {
 
+	///-------------------------------------------/// 
+	/// メンバ関数
+	///-------------------------------------------///
 public:
 
 	/// <summary>
@@ -33,6 +39,9 @@ public:
 	/// </summary>
 	void Draw() override;
 
+	///-------------------------------------------/// 
+	/// メンバ変数
+	///-------------------------------------------///
 private:
 
 	//カメラ
