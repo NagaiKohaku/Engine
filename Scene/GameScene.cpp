@@ -1,13 +1,11 @@
 #include "GameScene.h"
 
-#include "DirectXCommon.h"
-#include "Object3DCommon.h"
-#include "Object2DCommon.h"
-#include "DebugObjectCommon.h"
+#include "2d/Sprite/SpriteManager.h"
+#include "3d/Model/ModelManager.h"
+#include "3d/Particle/ParticleManager.h"
 
-#include "ModelManager.h"
-#include "SpriteManager.h"
-#include "ParticleManager.h"
+#include "3d/Object/Object3DCommon.h"
+#include "3d/Object/DebugObjectCommon.h"
 
 #include "imgui.h"
 
