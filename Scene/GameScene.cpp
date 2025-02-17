@@ -35,18 +35,10 @@ void GameScene::Initialize() {
 	//モデルのロード
 	ModelManager::GetInstance()->LoadModel("Ground", "terrain");
 
-	SpriteManager::GetInstance()->LoadSprite("BackGround", "backGround");
-
 	//音声データの読み込み
-	soundData_ = Audio::GetInstance()->SoundLoad("Resource/Sound/SE/se.wav");
+	Audio::GetInstance()->SoundLoad("SE", "se.wav");
 
 	/// === オブジェクトの生成 === ///
-
-	/// === 背景の生成 === ///
-
-	backGround_ = std::make_unique<Object2D>();
-
-	backGround_->SetSprite("BackGround");
 
 	/// === 箱の生成 === ///
 
@@ -88,24 +80,18 @@ void GameScene::Initialize() {
 
 	//モデルの設定
 	ground_->SetModel("Ground");
-
-	/// === SEの生成 === ///
-
-	soundObject_ = Audio::GetInstance()->CreateSoundObject(soundData_, false);
 }
 
 void GameScene::Finalize() {
 
 	//音声データの解放
-	Audio::GetInstance()->SoundUnLoad(&soundData_);
+	Audio::GetInstance()->Finalize();
 }
 
 void GameScene::Update() {
 
 	//カメラをデバッグ状態で更新
 	camera_->Update();
-
-	backGround_->Update();
 
 	//3Dオブジェクトの更新
 	cube_->Update();
@@ -142,7 +128,7 @@ void GameScene::Update() {
 	if (ImGui::Button("Start Audio")) {
 
 		//音声データの再生
-		Audio::GetInstance()->StartSound(soundObject_);
+		Audio::GetInstance()->StartSound("SE",false);
 	}
 
 	ImGui::Text("Shift + LeftClick : Move Camera");
@@ -155,9 +141,6 @@ void GameScene::Update() {
 }
 
 void GameScene::Draw() {
-
-	//背景の描画 : 背景レイヤー
-	backGround_->Draw(BackGround);
 
 	//箱の描画 : オブジェクトレイヤー
 	cube_->Draw(Object);

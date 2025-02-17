@@ -47,11 +47,6 @@ private:
 	//カメラ
 	std::unique_ptr<Camera> camera_;
 
-	//音声データ
-	SoundData soundData_;
-
-	std::unique_ptr<Object2D> backGround_;
-
 	//箱
 	std::unique_ptr<Object3D> cube_;
 
@@ -60,8 +55,4 @@ private:
 
 	//地面
 	std::unique_ptr<Object3D> ground_;
-
-	//SE
-	SoundObject soundObject_;
-
 };

@@ -23,17 +23,162 @@ void Audio::Initialize() {
 }
 
 ///=====================================================/// 
+/// 更新
+///=====================================================///
+void Audio::Update() {
+
+	//登録されている全要素を参照
+	for (auto& [name, object] : sounds_) {
+
+		//生成されている全インスタンスを参照
+		for (int i = 0; i < object.instance.size(); i++) {
+
+			//音声が流れていなければ
+			if (!isPlayed(object.instance[i])) {
+
+				//音声インスタンスを削除
+				object.instance.erase(object.instance.begin() + i);
+			}
+		}
+	}
+}
+
+///=====================================================/// 
 /// 終了処理
 ///=====================================================///
 void Audio::Finalize() {
 
+	//登録されている全要素を参照
+	for (auto& [name, object] : sounds_) {
+
+		//生成されている全インスタンスを参照
+		for (int i = 0; i < object.instance.size(); i++) {
+
+			xAudio2_->CommitChanges(object.instance[i].pSourceVoice->Stop());
+
+			//音声インスタンスを削除
+			object.instance.erase(object.instance.begin() + i);
+		}
+
+		SoundUnLoad(name);
+	}
+
+	sounds_.clear();
+
 	xAudio2_.Reset();
+}
+
+void Audio::SoundLoad(std::string soundName, std::string fileName) {
+
+	//既に登録されているかを確認
+	if (sounds_.contains(soundName)) {
+
+		//登録されていたら早期リターン
+		return;
+	}
+
+	std::string filePath = "Resource/Sound/SE/" + fileName;
+
+	//新しく登録する音源
+	SoundObject object;
+
+	//音源データを読み込む
+	SoundData data = LoadWavFile(filePath);
+
+	//音源データを設定する
+	object.data = data;
+
+	//音源を登録する
+	sounds_.insert(std::make_pair(soundName, object));
+}
+
+///=====================================================/// 
+/// 音声の再生
+///=====================================================///
+void Audio::StartSound(std::string soundName, bool isLoop) {
+
+	//登録されている音源かどうかを確認
+	if (!sounds_.contains(soundName)) {
+
+		//登録されていなかったら早期リターン
+		return;
+	}
+
+	HRESULT result;
+
+	SoundInstance newInstance;
+
+	newInstance = CreateSoundInstance(sounds_[soundName].data, isLoop);
+
+	result = newInstance.pSourceVoice->SubmitSourceBuffer(&newInstance.buf);
+
+	result = newInstance.pSourceVoice->Start();
+
+	sounds_[soundName].instance.push_back(newInstance);
+}
+
+///=====================================================/// 
+/// 音声の停止
+///=====================================================///
+void Audio::StopSound(std::string soundName) {
+
+	//登録されている音源かどうかを確認
+	if (!sounds_.contains(soundName)) {
+
+		//登録されていなかったら早期リターン
+		return;
+	}
+
+	HRESULT result;
+
+	for (int i = 0; i < sounds_[soundName].instance.size(); i++) {
+
+		xAudio2_->CommitChanges(sounds_[soundName].instance[i].pSourceVoice->Stop());
+
+		result = sounds_[soundName].instance[i].pSourceVoice->FlushSourceBuffers();
+	}
+}
+
+///=====================================================/// 
+/// 音声データの解放
+///=====================================================///
+void Audio::SoundUnLoad(std::string soundName) {
+
+	//登録されている音源かどうかを確認
+	if (!sounds_.contains(soundName)) {
+
+		//登録されていなかったら早期リターン
+		return;
+	}
+
+	//メモリを解放
+	delete[] sounds_[soundName].data.pBuffer;
+
+	sounds_[soundName].data.pBuffer = 0;
+	sounds_[soundName].data.bufferSize = 0;
+	sounds_[soundName].data.wfex = {};
+}
+
+///=====================================================/// 
+/// 音声が流れているか
+///=====================================================///
+bool Audio::isPlayed(SoundInstance soundInstance) {
+
+	XAUDIO2_VOICE_STATE state;
+
+	soundInstance.pSourceVoice->GetState(&state);
+
+	if (state.BuffersQueued == 0) {
+		return false;
+	}
+
+	return true;
 }
 
 ///=====================================================/// 
 /// 音声データの読み込み
 ///=====================================================///
-SoundData Audio::SoundLoad(const char* fileName) {
+Audio::SoundData Audio::LoadWavFile(std::string fileName) {
 
 	/// === ローカル変数 === ///
 
@@ -167,23 +312,9 @@ SoundData Audio::SoundLoad(const char* fileName) {
 }
 
 ///=====================================================/// 
-/// 音声データの解放
-///=====================================================///
-void Audio::SoundUnLoad(SoundData* soundData) {
-
-	//バッファのメモリを解放
-	delete[] soundData->pBuffer;
-
-	//音声データの初期化
-	soundData->pBuffer = 0;
-	soundData->bufferSize = 0;
-	soundData->wfex = {};
-}
-
-///=====================================================/// 
 /// 音声オブジェクトの生成
 ///=====================================================///
-SoundObject Audio::CreateSoundObject(SoundData soundData, bool isLoop) {
+Audio::SoundInstance Audio::CreateSoundInstance(SoundData soundData, bool isLoop) {
 
 	HRESULT result;
 
@@ -202,55 +333,11 @@ SoundObject Audio::CreateSoundObject(SoundData soundData, bool isLoop) {
 		buf.LoopCount = XAUDIO2_LOOP_INFINITE;
 	}
 
-	SoundObject resultSource;
+	SoundInstance resultInstance;
 
-	resultSource.pSourceVoice = pSourceVoice;
-	resultSource.buf = buf;
-	resultSource.soundData = soundData;
+	resultInstance.pSourceVoice = pSourceVoice;
+	resultInstance.buf = buf;
+	resultInstance.soundData = soundData;
 
-	return resultSource;
-}
-
-///=====================================================/// 
-/// 音声の再生
-///=====================================================///
-void Audio::StartSound(SoundObject object) {
-
-	HRESULT result;
-
-	if (isPlayed(object)) {
-
-		StopSound(object);
-	}
-
-	result = object.pSourceVoice->SubmitSourceBuffer(&object.buf);
-	result = object.pSourceVoice->Start();
-}
-
-///=====================================================/// 
-/// 音声の停止
-///=====================================================///
-void Audio::StopSound(SoundObject object) {
-
-	HRESULT result;
-
-	xAudio2_->CommitChanges(object.pSourceVoice->Stop());
-
-	result = object.pSourceVoice->FlushSourceBuffers();
-}
-
-///=====================================================/// 
-/// 音声が流れているか
-///=====================================================///
-bool Audio::isPlayed(SoundObject object) {
-
-	XAUDIO2_VOICE_STATE state;
-
-	object.pSourceVoice->GetState(&state);
-
-	if (state.BuffersQueued == 0) {
-		return false;
-	}
-
-	return true;
+	return resultInstance;
 }

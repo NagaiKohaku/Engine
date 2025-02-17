@@ -123,6 +123,9 @@ int WINAPI WinMain(HINSTANCE, HINSTANCE, LPSTR, int) {
 		//パーティクルの更新
 		particleManager->Update();
 
+		//音声の更新
+		audio->Update();
+
 		//ImGuiの受付終了
 		imGuiManager->End();
 
