@@ -7,6 +7,8 @@
 
 #include "cassert"
 
+#include "numbers"
+
 ///=====================================================/// 
 /// シングルトンインスタンス
 ///=====================================================///
@@ -32,6 +34,8 @@ void Object3DCommon::Initialize() {
 	//平行光源ライトの初期化
 	directionalLight_->Initialize();
 
+	directionalLight_->SetIntensity(1.0f);
+
 	//点光源ライトの生成
 	pointLight_ = std::make_unique<PointLight>();
 
@@ -39,6 +43,14 @@ void Object3DCommon::Initialize() {
 	pointLight_->Initialize();
 
 	pointLight_->SetIntensity(0.0f);
+
+	//スポットライトの生成
+	spotLight_ = std::make_unique<SpotLight>();
+
+	//スポットライトの初期化
+	spotLight_->Initialize();
+
+	spotLight_->SetIntensity(0.0f);
 
 	//カメラ情報のバッファリソースの生成
 	cameraForGpuResource = dxCommon_->CreateBufferResource(sizeof(CameraForGPU));
@@ -69,6 +81,15 @@ void Object3DCommon::Update() {
 
 	//点光源ライトのImGuiを表示
 	pointLight_->DisplayImGui();
+
+	//点光源ライトの更新
+	pointLight_->Update();
+
+	//スポットライトのImGuiを表示
+	spotLight_->DisplayImGui();
+
+	//スポットライトの更新
+	spotLight_->Update();
 }
 
 ///=====================================================/// 
@@ -93,6 +114,9 @@ void Object3DCommon::CommonDrawSetting() {
 
 	//点光源ライトのデータをGPUに送信
 	pointLight_->SendDataForGPU();
+
+	//スポットライトのデータをGPUに送信
+	spotLight_->SendDataForGPU();
 }
 
 ///=====================================================/// 
@@ -115,7 +139,7 @@ void Object3DCommon::CreateRootSignature() {
 	descriptorRange[0].OffsetInDescriptorsFromTableStart = D3D12_DESCRIPTOR_RANGE_OFFSET_APPEND; //Offsetを自動計算
 
 	//RootParameterを作成
-	D3D12_ROOT_PARAMETER rootParameters[6] = {};
+	D3D12_ROOT_PARAMETER rootParameters[7] = {};
 
 	//マテリアル
 	rootParameters[0].ParameterType = D3D12_ROOT_PARAMETER_TYPE_CBV;                   //CBVを使う
@@ -147,6 +171,11 @@ void Object3DCommon::CreateRootSignature() {
 	rootParameters[5].ParameterType = D3D12_ROOT_PARAMETER_TYPE_CBV;                   //CBVを使う
 	rootParameters[5].ShaderVisibility = D3D12_SHADER_VISIBILITY_PIXEL;                //PixelShaderを使う
 	rootParameters[5].Descriptor.ShaderRegister = 3;                                   //レジスタ番号3を使う
+
+	//スポットライト
+	rootParameters[6].ParameterType = D3D12_ROOT_PARAMETER_TYPE_CBV;                   //CBVを使う
+	rootParameters[6].ShaderVisibility = D3D12_SHADER_VISIBILITY_PIXEL;                //PixelShaderを使う
+	rootParameters[6].Descriptor.ShaderRegister = 4;                                   //レジスタ番号4を使う
 
 	descriptionRootSignature.pParameters = rootParameters;               //ルートパラメータ配列へのポインタ
 	descriptionRootSignature.NumParameters = _countof(rootParameters);   //配列の長さ
