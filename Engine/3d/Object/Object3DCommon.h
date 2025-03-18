@@ -2,6 +2,7 @@
 
 #include "3d/Light/DirectionalLight.h"
 #include "3d/Light/PointLight.h"
+#include "3d/Light/SpotLight.h"
 
 #include "Math/Vector3.h"
 
@@ -133,6 +134,9 @@ private:
 
 	//点光源ライト
 	std::unique_ptr<PointLight> pointLight_;
+
+	//スポットライト
+	std::unique_ptr<SpotLight> spotLight_;
 
 	//バッファリソース内のデータを指すポインタ
 	CameraForGPU* cameraForGpuData = nullptr;

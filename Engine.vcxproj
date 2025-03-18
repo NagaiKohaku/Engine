@@ -117,6 +117,7 @@ copy "$(WindowsSdkDir)bin\$(TargetPlatformVersion)\x64\dxil.dll" "$(TargetDir)dx
     <ClCompile Include="Engine\3d\Light\DirectionalLight.cpp" />
     <ClCompile Include="Engine\3d\Object\DebugLine.cpp" />
     <ClCompile Include="Engine\3d\Object\DebugObjectCommon.cpp" />
+    <ClCompile Include="Engine\Math\Clamp.cpp" />
     <ClCompile Include="main.cpp" />
     <ClCompile Include="Engine\Math\Easing.cpp" />
     <ClCompile Include="Engine\Math\MakeMatrixMath.cpp" />
@@ -136,6 +137,7 @@ copy "$(WindowsSdkDir)bin\$(TargetPlatformVersion)\x64\dxil.dll" "$(TargetDir)dx
     <ClCompile Include="Scene\SceneManager.cpp" />
     <ClCompile Include="Engine\2d\Sprite\SpriteManager.cpp" />
     <ClCompile Include="Engine\Math\WorldTransform.cpp" />
+    <ClCompile Include="Engine\3d\Light\SpotLight.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Engine\2d\Sprite\Sprite.h" />
@@ -159,6 +161,7 @@ copy "$(WindowsSdkDir)bin\$(TargetPlatformVersion)\x64\dxil.dll" "$(TargetDir)dx
     <ClInclude Include="Engine\3d\Object\DebugLine.h" />
     <ClInclude Include="Engine\3d\Object\DebugObjectCommon.h" />
     <ClInclude Include="Engine\Math\AABB.h" />
+    <ClInclude Include="Engine\Math\Clamp.h" />
     <ClInclude Include="Engine\Math\Easing.h" />
     <ClInclude Include="Engine\Math\MakeMatrixMath.h" />
     <ClInclude Include="Engine\Math\Matrix4x4.h" />
@@ -177,6 +180,7 @@ copy "$(WindowsSdkDir)bin\$(TargetPlatformVersion)\x64\dxil.dll" "$(TargetDir)dx
     <ClInclude Include="Scene\SceneManager.h" />
     <ClInclude Include="Engine\2d\Sprite\SpriteManager.h" />
     <ClInclude Include="Engine\Math\WorldTransform.h" />
+    <ClInclude Include="Engine\3d\Light\SpotLight.h" />
   </ItemGroup>
   <ItemGroup>
     <None Include="Resource\Shaders\Object3d.hlsli">

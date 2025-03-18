@@ -4,6 +4,8 @@
 
 #include "imgui.h"
 
+#include "Math/Clamp.h"
+
 ///=====================================================/// 
 /// 初期化
 ///=====================================================///
@@ -32,7 +34,7 @@ void PointLight::Initialize() {
 	//半径の設定
 	lightData_->radius = 10.0f;
 
-	//減少度の設定
+	//減衰率の設定
 	lightData_->decay = 1.0f;
 
 }
@@ -41,6 +43,15 @@ void PointLight::Initialize() {
 /// 更新
 ///=====================================================///
 void PointLight::Update() {
+
+	//照度を0以上に制限
+	lightData_->intensity = ClampMinZero(lightData_->intensity);
+
+	//半径を0以上に制限
+	lightData_->radius = ClampMinZero(lightData_->radius);
+
+	//減衰率を0以上に制限
+	lightData_->decay = ClampMinZero(lightData_->decay);
 }
 
 ///=====================================================/// 

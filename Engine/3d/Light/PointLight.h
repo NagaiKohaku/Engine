@@ -24,7 +24,7 @@ private:
 		Vector3 position; //座標
 		float intensity;  //照度
 		float radius;     //半径
-		float decay;      //減少度
+		float decay;      //減衰率
 		float padding[2]; //穴埋め
 	};
 
