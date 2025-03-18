@@ -1,6 +1,7 @@
 #pragma once
 #include "Windows.h"
 #include "d3d12.h"
+#include "d3dx12.h"
 #include "dxgi1_6.h"
 #include "dxgidebug.h"
 #include "dxcapi.h"
@@ -171,6 +172,9 @@ private:
 	//DXCコンパイラの初期化
 	void InitializeDXCCompile();
 
+	//ポストプロセスの初期化
+	void InitializePostProcess();
+
 	//FPS固定初期化
 	void InitializeFixFPS();
 
@@ -182,6 +186,12 @@ private:
 
 	//GPUデスクリプタヒープのゲッター
 	D3D12_GPU_DESCRIPTOR_HANDLE GetGPUDescriptorHandle(Microsoft::WRL::ComPtr<ID3D12DescriptorHeap>& descriptorHeap, uint32_t descriptorSize, uint32_t index);
+
+	void CreatePostProcess();
+
+	void CreateScreenVertex();
+
+	void CreateScreenPipeline();
 
 	///-------------------------------------------/// 
 	/// メンバ変数
@@ -254,4 +264,16 @@ private:
 
 	//記録時間(FPS固定用)
 	std::chrono::steady_clock::time_point reference_;
+
+	Microsoft::WRL::ComPtr<ID3D12Resource> screenResource_;
+
+	Microsoft::WRL::ComPtr<ID3D12DescriptorHeap> postProcessRTVHeap_ = nullptr;
+	Microsoft::WRL::ComPtr<ID3D12DescriptorHeap> postProcessSRVHeap_ = nullptr;
+
+	Microsoft::WRL::ComPtr<ID3D12Resource> screenVertexBuffer_;
+	D3D12_VERTEX_BUFFER_VIEW screenVertexBufferView_;
+
+	Microsoft::WRL::ComPtr<ID3D12RootSignature> screenRootSignature_;
+
+	Microsoft::WRL::ComPtr<ID3D12PipelineState> screenPipeline_;
 };

@@ -131,6 +131,7 @@ copy "$(WindowsSdkDir)bin\$(TargetPlatformVersion)\x64\dxil.dll" "$(TargetDir)dx
     <ClCompile Include="Engine\3d\Particle\ParticleCommon.cpp" />
     <ClCompile Include="Engine\3d\Particle\ParticleGroup.cpp" />
     <ClCompile Include="Engine\Base\Renderer.cpp" />
+    <ClCompile Include="PostProcess.cpp" />
     <ClCompile Include="Scene\BaseScene.cpp" />
     <ClCompile Include="Scene\GameScene.cpp" />
     <ClCompile Include="Scene\SceneManager.cpp" />
@@ -172,6 +173,7 @@ copy "$(WindowsSdkDir)bin\$(TargetPlatformVersion)\x64\dxil.dll" "$(TargetDir)dx
     <ClInclude Include="Engine\3d\Particle\ParticleCommon.h" />
     <ClInclude Include="Engine\3d\Particle\ParticleGroup.h" />
     <ClInclude Include="Engine\Base\Renderer.h" />
+    <ClInclude Include="PostProcess.h" />
     <ClInclude Include="Scene\BaseScene.h" />
     <ClInclude Include="Scene\GameScene.h" />
     <ClInclude Include="Scene\SceneManager.h" />
@@ -195,6 +197,7 @@ copy "$(WindowsSdkDir)bin\$(TargetPlatformVersion)\x64\dxil.dll" "$(TargetDir)dx
       <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">true</ExcludedFromBuild>
       <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Release|x64'">true</ExcludedFromBuild>
     </None>
+    <None Include="Resource\Shader\PostProcess.hlsli" />
   </ItemGroup>
   <ItemGroup>
     <FxCompile Include="Resource\Shaders\Object3d.PS.hlsl">
@@ -228,6 +231,14 @@ copy "$(WindowsSdkDir)bin\$(TargetPlatformVersion)\x64\dxil.dll" "$(TargetDir)dx
     <FxCompile Include="Resource\Shader\Object2d.VS.hlsl">
       <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">true</ExcludedFromBuild>
       <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Release|x64'">true</ExcludedFromBuild>
+    </FxCompile>
+    <FxCompile Include="Resource\Shader\PostProcess.PS.hlsl">
+      <ShaderType Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">Pixel</ShaderType>
+      <ShaderType Condition="'$(Configuration)|$(Platform)'=='Release|x64'">Pixel</ShaderType>
+    </FxCompile>
+    <FxCompile Include="Resource\Shader\PostProcess.VS.hlsl">
+      <ShaderType Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">Vertex</ShaderType>
+      <ShaderType Condition="'$(Configuration)|$(Platform)'=='Release|x64'">Vertex</ShaderType>
     </FxCompile>
   </ItemGroup>
   <ItemGroup>

@@ -2,6 +2,9 @@
 
 #include "Base/WinApp.h"
 
+#include "Math/Vector2.h"
+#include "Math/Vector3.h"
+
 #include "Other/Log.h"
 
 #include "cassert"
@@ -514,6 +517,11 @@ void DirectXCommon::InitializeDXCCompile() {
 	OutPutLog("Complete Initialize DXCompile\n");
 }
 
+void DirectXCommon::InitializePostProcess() {
+
+	CreatePostProcess();
+}
+
 ///=====================================================/// 
 /// FPS固定初期化
 ///=====================================================///
@@ -940,4 +948,200 @@ D3D12_GPU_DESCRIPTOR_HANDLE DirectXCommon::GetGPUDescriptorHandle(Microsoft::WRL
 	handleGPU.ptr += (descriptorSize * index);
 
 	return handleGPU;
+}
+
+void DirectXCommon::CreatePostProcess() {
+
+	/// === リソースの生成 === ///
+
+	auto& buffer = backBuffers_[0];
+
+	auto resourceDesc = buffer->GetDesc();
+
+	float clearScreen[4] = { 0.0f,0.0f,0.0f,1.0f };
+
+	D3D12_HEAP_PROPERTIES heapProp = CD3DX12_HEAP_PROPERTIES(D3D12_HEAP_TYPE_DEFAULT);
+
+	D3D12_CLEAR_VALUE clearValue = CD3DX12_CLEAR_VALUE(DXGI_FORMAT_R8G8B8A8_UNORM_SRGB, clearScreen);
+
+	auto result = device_->CreateCommittedResource(
+		&heapProp,
+		D3D12_HEAP_FLAG_NONE,
+		&resourceDesc,
+		D3D12_RESOURCE_STATE_PIXEL_SHADER_RESOURCE,
+		&clearValue,
+		IID_PPV_ARGS(screenResource_.ReleaseAndGetAddressOf())
+	);
+
+	if (FAILED(result)) {
+
+		return;
+	}
+
+	/// === RTVの生成 === ///
+
+	auto heapDesc = rtvDescriptorHeap_->GetDesc();
+	heapDesc.NumDescriptors = 1;
+	result = device_->CreateDescriptorHeap(&heapDesc, IID_PPV_ARGS(postProcessRTVHeap_.ReleaseAndGetAddressOf()));
+
+	D3D12_RENDER_TARGET_VIEW_DESC rtvDesc = {};
+	rtvDesc.ViewDimension = D3D12_RTV_DIMENSION_TEXTURE2D;
+	rtvDesc.Format = DXGI_FORMAT_R8G8B8A8_UNORM_SRGB;
+
+	auto handle = postProcessRTVHeap_->GetCPUDescriptorHandleForHeapStart();
+	device_->CreateRenderTargetView(screenResource_.Get(), &rtvDesc, handle);
+
+	/// === SRVの生成 === ///
+	heapDesc.NumDescriptors = 1;
+	heapDesc.Type = D3D12_DESCRIPTOR_HEAP_TYPE_CBV_SRV_UAV;
+	heapDesc.Flags = D3D12_DESCRIPTOR_HEAP_FLAG_SHADER_VISIBLE;
+	heapDesc.NodeMask = 0;
+
+	result = device_->CreateDescriptorHeap(&heapDesc, IID_PPV_ARGS(postProcessSRVHeap_.ReleaseAndGetAddressOf()));
+
+	if (FAILED(result)) {
+
+		return;
+	}
+
+	D3D12_SHADER_RESOURCE_VIEW_DESC srvDesc = {};
+	srvDesc.ViewDimension = D3D12_SRV_DIMENSION_TEXTURE2D;
+	srvDesc.Format = rtvDesc.Format;
+	srvDesc.Texture2D.MipLevels = 1;
+	srvDesc.Shader4ComponentMapping = D3D12_DEFAULT_SHADER_4_COMPONENT_MAPPING;
+
+	handle = postProcessSRVHeap_->GetCPUDescriptorHandleForHeapStart();
+
+	device_->CreateShaderResourceView(screenResource_.Get(), &srvDesc, handle);
+}
+
+void DirectXCommon::CreateScreenVertex() {
+
+	struct ScreenVertex {
+		Vector3 pos;
+		Vector2 uv;
+	};
+
+	ScreenVertex sv[4] = { {{-1,-1,0.1},{0,1}},
+						{{-1,1,0.1},{0,0}},
+						{{1,-1,0.1},{1,1}},
+						{{1,1,0.1},{1,0}} };
+
+	auto heapProp = CD3DX12_HEAP_PROPERTIES(D3D12_HEAP_TYPE_UPLOAD);
+	auto resourceDesc = CD3DX12_RESOURCE_DESC::Buffer(sizeof(sv));
+	auto result = device_->CreateCommittedResource(
+		&heapProp,
+		D3D12_HEAP_FLAG_NONE,
+		&resourceDesc,
+		D3D12_RESOURCE_STATE_GENERIC_READ,
+		nullptr,
+		IID_PPV_ARGS(screenVertexBuffer_.ReleaseAndGetAddressOf())
+	);
+
+	if (FAILED(result)) {
+		assert(0);
+		return;
+	}
+
+	ScreenVertex* mapped = nullptr;
+	screenVertexBuffer_->Map(0, nullptr, (void**)&mapped);
+	std::copy(std::begin(sv), std::end(sv), mapped);
+	screenVertexBuffer_->Unmap(0, nullptr);
+
+	screenVertexBufferView_.BufferLocation = screenVertexBuffer_->GetGPUVirtualAddress();
+	screenVertexBufferView_.SizeInBytes = sizeof(sv);
+	screenVertexBufferView_.StrideInBytes = sizeof(ScreenVertex);
+}
+
+void DirectXCommon::CreateScreenPipeline() {
+
+	D3D12_DESCRIPTOR_RANGE range[1] = {};
+
+	range[0].RangeType = D3D12_DESCRIPTOR_RANGE_TYPE_SRV;
+	range[0].BaseShaderRegister = 0;
+	range[0].NumDescriptors = 1;
+
+	D3D12_ROOT_PARAMETER rp[1] = {};
+
+	rp[0].ParameterType = D3D12_ROOT_PARAMETER_TYPE_DESCRIPTOR_TABLE;
+	rp[0].ShaderVisibility = D3D12_SHADER_VISIBILITY_PIXEL;
+	rp[0].DescriptorTable.pDescriptorRanges = &range[0];
+	rp[0].DescriptorTable.NumDescriptorRanges = 1;
+
+	D3D12_ROOT_SIGNATURE_DESC rsDesc = {};
+	rsDesc.NumParameters = 1;
+	rsDesc.pParameters = rp;
+
+	D3D12_STATIC_SAMPLER_DESC sampler = CD3DX12_STATIC_SAMPLER_DESC(0);
+	sampler.AddressU = D3D12_TEXTURE_ADDRESS_MODE_CLAMP;
+	sampler.AddressV = D3D12_TEXTURE_ADDRESS_MODE_CLAMP;
+	sampler.AddressW = D3D12_TEXTURE_ADDRESS_MODE_CLAMP;
+	rsDesc.pStaticSamplers = &sampler;
+	rsDesc.NumStaticSamplers = 1;
+	rsDesc.Flags = D3D12_ROOT_SIGNATURE_FLAG_ALLOW_INPUT_ASSEMBLER_INPUT_LAYOUT;
+
+	Microsoft::WRL::ComPtr<ID3DBlob> rsBlob;
+	Microsoft::WRL::ComPtr<ID3DBlob> errBlob;
+
+	auto result = D3D12SerializeRootSignature(&rsDesc, D3D_ROOT_SIGNATURE_VERSION_1, rsBlob.ReleaseAndGetAddressOf(), errBlob.ReleaseAndGetAddressOf());
+	if (FAILED(result)) {
+		assert(0);
+		return;
+	}
+
+	result = device_->CreateRootSignature(0, rsBlob->GetBufferPointer(), rsBlob->GetBufferSize(), IID_PPV_ARGS(screenRootSignature_.ReleaseAndGetAddressOf()));
+	if (FAILED(result)) {
+		assert(0);
+		return;
+	}
+
+	Microsoft::WRL::ComPtr<ID3DBlob> vs;
+	Microsoft::WRL::ComPtr<ID3DBlob> ps;
+
+	vs = CompileShader(
+		L"Resource/Shader/PostProcess.VS.hlsl",
+		L"vs_6_0"
+	);
+
+	ps = CompileShader(
+		L"Resource/Shader/PostProcess.PS.hlsl",
+		L"ps_6_0"
+	);
+
+	D3D12_GRAPHICS_PIPELINE_STATE_DESC gpsDesc = {};
+	gpsDesc.VS = CD3DX12_SHADER_BYTECODE(vs.Get());
+	gpsDesc.PS = CD3DX12_SHADER_BYTECODE(ps.Get());
+	gpsDesc.DepthStencilState.DepthEnable = false;
+	gpsDesc.DepthStencilState.StencilEnable = false;
+
+	//inputElementDescs[0].SemanticName = "POSITION";
+	//inputElementDescs[0].SemanticIndex = 0;
+	//inputElementDescs[0].Format = DXGI_FORMAT_R32G32B32A32_FLOAT;
+	//inputElementDescs[0].AlignedByteOffset = D3D12_APPEND_ALIGNED_ELEMENT;
+
+	D3D12_INPUT_ELEMENT_DESC layout[2] = {
+		{"POSITION",0,DXGI_FORMAT_R32G32B32_FLOAT,0,D3D12_APPEND_ALIGNED_ELEMENT,D3D12_INPUT_CLASSIFICATION_PER_VERTEX_DATA,0},
+		{"TEXCOORD",0,DXGI_FORMAT_R32G32_FLOAT,0,D3D12_APPEND_ALIGNED_ELEMENT,D3D12_INPUT_CLASSIFICATION_PER_VERTEX_DATA,0}
+	};
+
+	gpsDesc.InputLayout.NumElements = _countof(layout);
+	gpsDesc.InputLayout.pInputElementDescs = layout;
+	gpsDesc.BlendState = CD3DX12_BLEND_DESC(D3D12_DEFAULT);
+	gpsDesc.PrimitiveTopologyType = D3D12_PRIMITIVE_TOPOLOGY_TYPE_TRIANGLE;
+	gpsDesc.NumRenderTargets = 1;
+	gpsDesc.RTVFormats[0] = DXGI_FORMAT_R8G8B8A8_UNORM_SRGB;
+	gpsDesc.RasterizerState = CD3DX12_RASTERIZER_DESC(D3D12_DEFAULT);
+	gpsDesc.SampleMask = D3D12_DEFAULT_SAMPLE_MASK;
+	gpsDesc.SampleDesc.Count = 1;
+	gpsDesc.SampleDesc.Quality = 0;
+	gpsDesc.Flags = D3D12_PIPELINE_STATE_FLAG_NONE;
+	gpsDesc.pRootSignature = screenRootSignature_.Get();
+
+	result = device_->CreateGraphicsPipelineState(&gpsDesc, IID_PPV_ARGS(screenPipeline_.ReleaseAndGetAddressOf()));
+
+	if (FAILED(result)) {
+
+		assert(0);
+		return;
+	}
 }
